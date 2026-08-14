@@ -1,9 +1,10 @@
 {
   "name": "supermarkdown",
-  "private": true,
   "version": "1.0.0",
   "type": "module",
   "description": "打开即写、图片自包含、数据留在本地的所见即所得 Markdown 编辑器",
+  "license": "MIT",
+  "author": "riceshowerX",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
