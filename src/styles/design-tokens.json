@@ -1,0 +1,178 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "$description": "SuperMarkdown Design Tokens v1.0 — 四层架构（A1-identity / A2-semantic+structure / B-slot / C-extension），明暗双主题。Phase 2 锁定，源自 UIUX.md §3/§4，色值与命名零偏差。",
+  "color": {
+    "light": {
+      "$description": "明色主题 — 冷白基底",
+      "A1-identity": {
+        "bg": { "$type": "color", "$value": "#FAFAF9", "$description": "应用背景（暖白）" },
+        "surface": { "$type": "color", "$value": "#FFFFFF", "$description": "卡片/侧边栏/面板" },
+        "surface-sunken": { "$type": "color", "$value": "#F4F4F5", "$description": "编辑区下沉底、代码块底" },
+        "fg": { "$type": "color", "$value": "#1C1917", "$description": "主文本（暖深灰，非纯黑）" },
+        "muted": { "$type": "color", "$value": "#57534E", "$description": "次级文本" },
+        "accent": { "$type": "color", "$value": "#0D9488", "$description": "品牌强调色 Teal" },
+        "border": { "$type": "color", "$value": "#E7E5E4", "$description": "默认边框（暖灰）" }
+      },
+      "A2-semantic": {
+        "success": { "$type": "color", "$value": "#16A34A", "$description": "已保存" },
+        "warn": { "$type": "color", "$value": "#D97706", "$description": "保存中/警告" },
+        "danger": { "$type": "color", "$value": "#DC2626", "$description": "保存失败/删除" },
+        "info": { "$type": "color", "$value": "#2563EB", "$description": "信息提示" }
+      },
+      "B-slot": {
+        "fg-2": { "$type": "color", "$value": "#78716C", "$description": "三级文本/元数据" },
+        "surface-warm": { "$type": "color", "$value": "#FFF7ED", "$description": "引用块底（暖橙极淡）" },
+        "border-soft": { "$type": "color", "$value": "#F0EFED", "$description": "行分隔" },
+        "accent-hover": { "$type": "color", "$value": "#0F766E", "$description": "accent 悬停" },
+        "accent-active": { "$type": "color", "$value": "#115E59", "$description": "accent 激活" },
+        "accent-soft": { "$type": "color", "$value": "#CCFBF1", "$description": "accent 弱背景（选中态底）" },
+        "on-accent": { "$type": "color", "$value": "#FFFFFF", "$description": "accent 上的前景" },
+        "focus-ring": { "$type": "color", "$value": "rgba(13, 148, 136, 0.35)", "$description": "焦点环色" }
+      },
+      "C-extension": {
+        "md-code-bg": { "$type": "color", "$value": "#F4F4F5", "$description": "行内代码/代码块底" },
+        "md-code-fg": { "$type": "color", "$value": "#1C1917", "$description": "代码前景" },
+        "md-code-border": { "$type": "color", "$value": "#E7E5E4", "$description": "代码块边框" },
+        "md-table-header-bg": { "$type": "color", "$value": "#FAFAF9", "$description": "表格表头底" },
+        "md-table-border": { "$type": "color", "$value": "#D6D3D1", "$description": "表格分隔线" },
+        "md-quote-border": { "$type": "color", "$value": "#D6D3D1", "$description": "引用左侧竖线" },
+        "md-quote-fg": { "$type": "color", "$value": "#57534E", "$description": "引用文字" },
+        "md-link": { "$type": "color", "$value": "#2563EB", "$description": "文档链接" },
+        "md-link-hover": { "$type": "color", "$value": "#1D4ED8", "$description": "文档链接悬停" },
+        "md-link-visited": { "$type": "color", "$value": "#6D28D9", "$description": "文档链接已访问" },
+        "md-hr": { "$type": "color", "$value": "#D6D3D1", "$description": "分隔线" },
+        "md-selection": { "$type": "color", "$value": "rgba(13, 148, 136, 0.22)", "$description": "编辑选区" },
+        "md-task-checked": { "$type": "color", "$value": "#0D9488", "$description": "任务列表勾选" },
+        "md-inline-code-fg": { "$type": "color", "$value": "#9A3412", "$description": "行内代码文字（暖赭）" }
+      }
+    },
+    "dark": {
+      "$description": "暗色主题 — 暖灰基底（非纯黑）",
+      "A1-identity": {
+        "bg": { "$type": "color", "$value": "#1C1917", "$description": "应用背景（暖深灰）" },
+        "surface": { "$type": "color", "$value": "#26221F", "$description": "卡片/侧边栏/面板（亮度递进 1 级）" },
+        "surface-sunken": { "$type": "color", "$value": "#171412", "$description": "编辑区下沉底、代码块底" },
+        "fg": { "$type": "color", "$value": "#EDEAE6", "$description": "主文本（暖白）" },
+        "muted": { "$type": "color", "$value": "#A8A29E", "$description": "次级文本" },
+        "accent": { "$type": "color", "$value": "#2DD4BF", "$description": "品牌强调色 Teal（暗色提亮）" },
+        "border": { "$type": "color", "$value": "#3A3531", "$description": "默认边框" }
+      },
+      "A2-semantic": {
+        "success": { "$type": "color", "$value": "#4ADE80", "$description": "已保存" },
+        "warn": { "$type": "color", "$value": "#FBBF24", "$description": "保存中/警告" },
+        "danger": { "$type": "color", "$value": "#F87171", "$description": "保存失败/删除" },
+        "info": { "$type": "color", "$value": "#60A5FA", "$description": "信息提示" }
+      },
+      "B-slot": {
+        "fg-2": { "$type": "color", "$value": "#78716C", "$description": "三级文本/元数据" },
+        "surface-warm": { "$type": "color", "$value": "#2E2823", "$description": "引用块底（暖棕极淡）" },
+        "border-soft": { "$type": "color", "$value": "#2A2623", "$description": "行分隔" },
+        "accent-hover": { "$type": "color", "$value": "#14B8A6", "$description": "accent 悬停" },
+        "accent-active": { "$type": "color", "$value": "#0D9488", "$description": "accent 激活" },
+        "accent-soft": { "$type": "color", "$value": "rgba(45, 212, 191, 0.16)", "$description": "accent 弱背景" },
+        "on-accent": { "$type": "color", "$value": "#042F2E", "$description": "accent 上的前景（深色文字，对比度达标）" },
+        "focus-ring": { "$type": "color", "$value": "rgba(45, 212, 191, 0.4)", "$description": "焦点环色" }
+      },
+      "C-extension": {
+        "md-code-bg": { "$type": "color", "$value": "#171412", "$description": "行内代码/代码块底" },
+        "md-code-fg": { "$type": "color", "$value": "#EDEAE6", "$description": "代码前景" },
+        "md-code-border": { "$type": "color", "$value": "#3A3531", "$description": "代码块边框" },
+        "md-table-header-bg": { "$type": "color", "$value": "#26221F", "$description": "表格表头底" },
+        "md-table-border": { "$type": "color", "$value": "#44403C", "$description": "表格分隔线" },
+        "md-quote-border": { "$type": "color", "$value": "#57534E", "$description": "引用左侧竖线" },
+        "md-quote-fg": { "$type": "color", "$value": "#A8A29E", "$description": "引用文字" },
+        "md-link": { "$type": "color", "$value": "#7DB4F5", "$description": "文档链接" },
+        "md-link-hover": { "$type": "color", "$value": "#93C5FD", "$description": "文档链接悬停" },
+        "md-link-visited": { "$type": "color", "$value": "#C4B5FD", "$description": "文档链接已访问" },
+        "md-hr": { "$type": "color", "$value": "#44403C", "$description": "分隔线" },
+        "md-selection": { "$type": "color", "$value": "rgba(45, 212, 191, 0.28)", "$description": "编辑选区" },
+        "md-task-checked": { "$type": "color", "$value": "#2DD4BF", "$description": "任务列表勾选" },
+        "md-inline-code-fg": { "$type": "color", "$value": "#FBBF24", "$description": "行内代码文字" }
+      }
+    }
+  },
+  "font": {
+    "$description": "字体系统（UIUX.md §4 锁定）",
+    "family": {
+      "ui": { "$type": "fontFamily", "$value": ["Inter", "Noto Sans SC", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"], "$description": "UI 界面字体" },
+      "body": { "$type": "fontFamily", "$value": ["Inter", "Noto Sans SC", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"], "$description": "编辑/预览正文（与 UI 同栈，WYSIWYG 一致）" },
+      "mono": { "$type": "fontFamily", "$value": ["JetBrains Mono", "SFMono-Regular", "Cascadia Code", "Consolas", "Liberation Mono", "monospace"], "$description": "代码块/行内代码/数字" }
+    },
+    "size": {
+      "xs": { "$type": "fontSize", "$value": "12px", "$description": "状态栏、元数据" },
+      "sm": { "$type": "fontSize", "$value": "13px", "$description": "侧边栏文档项、按钮" },
+      "base": { "$type": "fontSize", "$value": "14px", "$description": "编辑器默认正文" },
+      "lg": { "$type": "fontSize", "$value": "16px", "$description": "预览区正文" },
+      "xl": { "$type": "fontSize", "$value": "18px", "$description": "H3 标题" },
+      "2xl": { "$type": "fontSize", "$value": "22px", "$description": "H2 标题" },
+      "3xl": { "$type": "fontSize", "$value": "28px", "$description": "H1 标题" },
+      "4xl": { "$type": "fontSize", "$value": "36px", "$description": "文档大标题" }
+    },
+    "weight": {
+      "regular": { "$type": "fontWeight", "$value": 400, "$description": "正文" },
+      "medium": { "$type": "fontWeight", "$value": 510, "$description": "按钮/表头/小标题" },
+      "semibold": { "$type": "fontWeight", "$value": 590, "$description": "大标题/当前文档名" }
+    },
+    "leading": {
+      "body": { "$type": "number", "$value": 1.6, "$description": "正文行高" },
+      "title": { "$type": "number", "$value": 1.3, "$description": "标题行高" },
+      "xs": { "$type": "number", "$value": 1.5, "$description": "小字行高" },
+      "code": { "$type": "number", "$value": 1.6, "$description": "代码行高" }
+    },
+    "tracking": {
+      "body": { "$type": "dimension", "$value": "0em", "$description": "正文字距" },
+      "caps": { "$type": "dimension", "$value": "0.06em", "$description": "ALL CAPS 字距（≥0.06em）" },
+      "title": { "$type": "dimension", "$value": "-0.01em", "$description": "标题负字距" }
+    }
+  },
+  "radius": {
+    "sm": { "$type": "dimension", "$value": "6px", "$description": "小元素：Badge/Tag" },
+    "md": { "$type": "dimension", "$value": "8px", "$description": "标准：按钮/输入框/Toast" },
+    "lg": { "$type": "dimension", "$value": "12px", "$description": "大元素：卡片/对话框" }
+  },
+  "space": {
+    "1": { "$type": "dimension", "$value": "4px" },
+    "2": { "$type": "dimension", "$value": "8px" },
+    "3": { "$type": "dimension", "$value": "12px" },
+    "4": { "$type": "dimension", "$value": "16px" },
+    "5": { "$type": "dimension", "$value": "20px" },
+    "6": { "$type": "dimension", "$value": "24px" },
+    "8": { "$type": "dimension", "$value": "32px" },
+    "10": { "$type": "dimension", "$value": "40px" }
+  },
+  "shadow": {
+    "light": {
+      "flat": { "$type": "boxShadow", "$value": "none", "$description": "无层级" },
+      "ring": { "$type": "boxShadow", "$value": "0 0 0 1px #E7E5E4", "$description": "1px 边框环" },
+      "raised": { "$type": "boxShadow", "$value": "0 1px 2px rgba(0,0,0,0.04), 0 4px 8px rgba(0,0,0,0.05)", "$description": "浮起（对话框/Toast）" }
+    },
+    "dark": {
+      "flat": { "$type": "boxShadow", "$value": "none", "$description": "无层级" },
+      "ring": { "$type": "boxShadow", "$value": "0 0 0 1px #3A3531", "$description": "1px 边框环" },
+      "raised": { "$type": "boxShadow", "$value": "0 0 0 1px #3A3531, 0 8px 24px rgba(0,0,0,0.35)", "$description": "浮起（暗色以亮度递进+阴影）" }
+    }
+  },
+  "motion": {
+    "fast": { "$type": "duration", "$value": "150ms", "$description": "状态反馈/主题切换" },
+    "base": { "$type": "duration", "$value": "200ms", "$description": "进入 UI/面板展开" },
+    "easeStandard": { "$type": "cubicBezier", "$value": [0.2, 0, 0, 1], "$description": "标准缓动" }
+  },
+  "layout": {
+    "$description": "A1-structure 布局常量（UIUX.md §5 数值，Phase 2 补充为 Token）",
+    "appbar-h": { "$type": "dimension", "$value": "44px", "$description": "顶栏高度" },
+    "statusbar-h": { "$type": "dimension", "$value": "28px", "$description": "状态栏高度" },
+    "sidebar-w": { "$type": "dimension", "$value": "240px", "$description": "侧边栏宽度（lg）" },
+    "sidebar-w-xl": { "$type": "dimension", "$value": "260px", "$description": "侧边栏宽度（xl）" },
+    "sidebar-w-collapsed": { "$type": "dimension", "$value": "48px", "$description": "侧边栏折叠宽" },
+    "content-max": { "$type": "dimension", "$value": "720px", "$description": "预览区内容最大宽度（阅读舒适）" },
+    "min-pane-w": { "$type": "dimension", "$value": "320px", "$description": "分屏最小窗宽" }
+  },
+  "z-index": {
+    "$description": "层级（token-standard §6）",
+    "base": { "$type": "number", "$value": 0 },
+    "dropdown": { "$type": "number", "$value": 1000 },
+    "sticky": { "$type": "number", "$value": 1100 },
+    "modal": { "$type": "number", "$value": 1200 },
+    "toast": { "$type": "number", "$value": 1300 }
+  }
+}

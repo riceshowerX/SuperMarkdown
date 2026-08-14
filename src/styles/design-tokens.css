@@ -1,0 +1,264 @@
+/* ============================================================
+   SuperMarkdown Design Tokens v1.0
+   四层架构：A1-identity / A2-semantic+structure / B-slot / C-extension
+   明暗双主题（默认跟随 :root 为明色）
+   来源：UIUX.md §3/§4 — Phase 2 锁定，色值与命名零偏差
+   硬编码禁令：本文件是唯一颜色/尺寸来源，业务代码一律引用 var()
+   ============================================================ */
+
+/* ─────────────────────────────────────────────
+   明色主题（默认）— 冷白基底
+   ───────────────────────────────────────────── */
+:root,
+:root[data-theme="light"] {
+  /* ══ A1-identity（品牌核心） ══ */
+  --bg: #FAFAF9;            /* 应用背景（暖白） */
+  --surface: #FFFFFF;       /* 卡片/侧边栏/面板 */
+  --surface-sunken: #F4F4F5;/* 编辑区下沉底、代码块底 */
+  --fg: #1C1917;            /* 主文本（暖深灰，非纯黑） */
+  --muted: #57534E;         /* 次级文本 */
+  --accent: #0D9488;        /* 品牌强调色 Teal */
+  --border: #E7E5E4;        /* 默认边框（暖灰） */
+
+  /* ══ A2-semantic（语义色） ══ */
+  --success: #16A34A;       /* 已保存 */
+  --warn: #D97706;          /* 保存中/警告 */
+  --danger: #DC2626;        /* 保存失败/删除 */
+  --info: #2563EB;          /* 信息提示 */
+
+  /* ══ A2-structure（结构） ══ */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+
+  /* ══ B-slot（组件插槽） ══ */
+  --fg-2: #78716C;               /* 三级文本/元数据 */
+  --surface-warm: #FFF7ED;       /* 引用块底（暖橙极淡） */
+  --border-soft: #F0EFED;        /* 行分隔 */
+  --accent-hover: #0F766E;       /* accent 悬停 */
+  --accent-active: #115E59;      /* accent 激活 */
+  --accent-soft: #CCFBF1;        /* accent 弱背景（选中态底） */
+  --on-accent: #FFFFFF;          /* accent 上的前景 */
+  --focus-ring: rgba(13, 148, 136, 0.35); /* 焦点环色 */
+
+  /* ══ C-extension（Markdown 专属） ══ */
+  --md-code-bg: #F4F4F5;         /* 行内代码/代码块底 */
+  --md-code-fg: #1C1917;         /* 代码前景 */
+  --md-code-border: #E7E5E4;     /* 代码块边框 */
+  --md-table-header-bg: #FAFAF9; /* 表格表头底 */
+  --md-table-border: #D6D3D1;    /* 表格分隔线 */
+  --md-quote-border: #D6D3D1;    /* 引用左侧竖线 */
+  --md-quote-fg: #57534E;        /* 引用文字 */
+  --md-link: #2563EB;            /* 文档链接 */
+  --md-link-hover: #1D4ED8;      /* 文档链接悬停 */
+  --md-link-visited: #6D28D9;    /* 文档链接已访问 */
+  --md-hr: #D6D3D1;              /* 分隔线 */
+  --md-selection: rgba(13, 148, 136, 0.22); /* 编辑选区 */
+  --md-task-checked: #0D9488;    /* 任务列表勾选 */
+  --md-inline-code-fg: #9A3412;  /* 行内代码文字（暖赭） */
+
+  /* ══ Elevation ══ */
+  --elev-flat: none;
+  --elev-ring: 0 0 0 1px var(--border);
+  --elev-raised: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 8px rgba(0, 0, 0, 0.05);
+
+  /* ══ Font（字体系统） ══ */
+  --font-ui: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-body: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'SFMono-Regular', 'Cascadia Code', Consolas, 'Liberation Mono', monospace;
+
+  /* ══ Type Scale（8 级） ══ */
+  --text-xs: 12px;
+  --text-sm: 13px;
+  --text-base: 14px;
+  --text-lg: 16px;
+  --text-xl: 18px;
+  --text-2xl: 22px;
+  --text-3xl: 28px;
+  --text-4xl: 36px;
+
+  /* ══ Leading & Tracking ══ */
+  --leading-body: 1.6;
+  --leading-title: 1.3;
+  --leading-xs: 1.5;
+  --leading-code: 1.6;
+  --tracking-body: 0;
+  --tracking-caps: 0.06em;
+  --tracking-title: -0.01em;
+
+  /* ══ Weight（三级） ══ */
+  --weight-regular: 400;
+  --weight-medium: 510;
+  --weight-semibold: 590;
+
+  /* ══ Motion ══ */
+  --motion-fast: 150ms;
+  --motion-base: 200ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+
+  /* ══ Layout（A1-structure） ══ */
+  --layout-appbar-h: 44px;
+  --layout-statusbar-h: 28px;
+  --layout-sidebar-w: 240px;
+  --layout-sidebar-w-xl: 260px;
+  --layout-sidebar-w-collapsed: 48px;
+  --layout-content-max: 720px;
+  --layout-min-pane-w: 320px;
+
+  /* ══ z-index ══ */
+  --z-base: 0;
+  --z-dropdown: 1000;
+  --z-sticky: 1100;
+  --z-modal: 1200;
+  --z-toast: 1300;
+}
+
+/* ─────────────────────────────────────────────
+   暗色主题 — 暖灰基底（非纯黑）
+   ───────────────────────────────────────────── */
+:root[data-theme="dark"] {
+  /* ══ A1-identity ══ */
+  --bg: #1C1917;            /* 应用背景（暖深灰） */
+  --surface: #26221F;       /* 卡片/侧边栏/面板（亮度递进 1 级） */
+  --surface-sunken: #171412;/* 编辑区下沉底、代码块底 */
+  --fg: #EDEAE6;            /* 主文本（暖白） */
+  --muted: #A8A29E;         /* 次级文本 */
+  --accent: #2DD4BF;        /* 品牌强调色 Teal（暗色提亮） */
+  --border: #3A3531;        /* 默认边框 */
+
+  /* ══ A2-semantic ══ */
+  --success: #4ADE80;
+  --warn: #FBBF24;
+  --danger: #F87171;
+  --info: #60A5FA;
+
+  /* ══ A2-structure（与明色一致） ══ */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+
+  /* ══ B-slot ══ */
+  --fg-2: #78716C;
+  --surface-warm: #2E2823;       /* 引用块底（暖棕极淡） */
+  --border-soft: #2A2623;
+  --accent-hover: #14B8A6;
+  --accent-active: #0D9488;
+  --accent-soft: rgba(45, 212, 191, 0.16); /* accent 弱背景 */
+  --on-accent: #042F2E;          /* accent 上的前景（深色文字） */
+  --focus-ring: rgba(45, 212, 191, 0.4);
+
+  /* ══ C-extension（Markdown 专属） ══ */
+  --md-code-bg: #171412;
+  --md-code-fg: #EDEAE6;
+  --md-code-border: #3A3531;
+  --md-table-header-bg: #26221F;
+  --md-table-border: #44403C;
+  --md-quote-border: #57534E;
+  --md-quote-fg: #A8A29E;
+  --md-link: #7DB4F5;
+  --md-link-hover: #93C5FD;
+  --md-link-visited: #C4B5FD;
+  --md-hr: #44403C;
+  --md-selection: rgba(45, 212, 191, 0.28);
+  --md-task-checked: #2DD4BF;
+  --md-inline-code-fg: #FBBF24;
+
+  /* ══ Elevation（暗色以亮度递进表达层级，阴影退位） ══ */
+  --elev-flat: none;
+  --elev-ring: 0 0 0 1px var(--border);
+  --elev-raised: 0 0 0 1px var(--border), 0 8px 24px rgba(0, 0, 0, 0.35);
+
+  /* ══ Font / Type Scale / Leading / Tracking / Weight（与明色一致，共用） ══ */
+  --font-ui: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-body: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'SFMono-Regular', 'Cascadia Code', Consolas, 'Liberation Mono', monospace;
+  --text-xs: 12px;
+  --text-sm: 13px;
+  --text-base: 14px;
+  --text-lg: 16px;
+  --text-xl: 18px;
+  --text-2xl: 22px;
+  --text-3xl: 28px;
+  --text-4xl: 36px;
+  --leading-body: 1.6;
+  --leading-title: 1.3;
+  --leading-xs: 1.5;
+  --leading-code: 1.6;
+  --tracking-body: 0;
+  --tracking-caps: 0.06em;
+  --tracking-title: -0.01em;
+  --weight-regular: 400;
+  --weight-medium: 510;
+  --weight-semibold: 590;
+
+  /* ══ Motion ══ */
+  --motion-fast: 150ms;
+  --motion-base: 200ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+
+  /* ══ Layout / z-index（共用） ══ */
+  --layout-appbar-h: 44px;
+  --layout-statusbar-h: 28px;
+  --layout-sidebar-w: 240px;
+  --layout-sidebar-w-xl: 260px;
+  --layout-sidebar-w-collapsed: 48px;
+  --layout-content-max: 720px;
+  --layout-min-pane-w: 320px;
+  --z-base: 0;
+  --z-dropdown: 1000;
+  --z-sticky: 1100;
+  --z-modal: 1200;
+  --z-toast: 1300;
+}
+
+/* ══ 基础应用（业务代码不得重复硬编码下列值） ══ */
+html {
+  color-scheme: light;
+  background-color: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  font-size: var(--text-base);
+  line-height: var(--leading-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 焦点可见（键盘可达） */
+:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--focus-ring);
+  border-radius: var(--radius-sm);
+}
+
+/* 动效降级 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

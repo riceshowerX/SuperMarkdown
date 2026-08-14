@@ -1,0 +1,86 @@
+@import "tailwindcss";
+
+/* ══ Token → Tailwind 颜色工具映射（全部引用 var(--*)，零硬编码） ══ */
+@theme {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-sunken: var(--surface-sunken);
+  --color-fg: var(--fg);
+  --color-fg-2: var(--fg-2);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-active: var(--accent-active);
+  --color-accent-soft: var(--accent-soft);
+  --color-on-accent: var(--on-accent);
+  --color-border: var(--border);
+  --color-border-soft: var(--border-soft);
+  --color-success: var(--success);
+  --color-warn: var(--warn);
+  --color-danger: var(--danger);
+  --color-info: var(--info);
+  --color-surface-warm: var(--surface-warm);
+}
+
+/* ══ 全局字体/字号/行高/字距工具（避开 Tailwind 默认命名冲突） ══ */
+.font-body { font-family: var(--font-body); }
+.font-ui { font-family: var(--font-ui); }
+.font-mono { font-family: var(--font-mono); }
+
+.tx-xs { font-size: var(--text-xs); }
+.tx-sm { font-size: var(--text-sm); }
+.tx-base { font-size: var(--text-base); }
+.tx-lg { font-size: var(--text-lg); }
+.tx-xl { font-size: var(--text-xl); }
+.tx-2xl { font-size: var(--text-2xl); }
+.tx-3xl { font-size: var(--text-3xl); }
+
+.wt-regular { font-weight: var(--weight-regular); }
+.wt-medium { font-weight: var(--weight-medium); }
+.wt-semibold { font-weight: var(--weight-semibold); }
+
+.lh-body { line-height: var(--leading-body); }
+.lh-title { line-height: var(--leading-title); }
+.lh-xs { line-height: var(--leading-xs); }
+.trk-title { letter-spacing: var(--tracking-title); }
+.trk-caps { letter-spacing: var(--tracking-caps); }
+
+/* ══ 主题过渡（150ms，prefers-reduced-motion 由 tokens.css 兜底） ══ */
+.theme-transition,
+.theme-transition body {
+  transition:
+    background-color var(--motion-fast) var(--ease-standard),
+    color var(--motion-fast) var(--ease-standard),
+    border-color var(--motion-fast) var(--ease-standard);
+}
+
+/* ══ 功能遮罩（设计指定 rgba(0,0,0,.4)，集中定义避免组件硬编码） ══ */
+.scrim {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+/* ══ 滚动条弱化（chrome 退到最弱） ══ */
+.sm-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+.sm-scroll::-webkit-scrollbar { width: 8px; height: 8px; }
+.sm-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+.sm-scroll::-webkit-scrollbar-track { background: transparent; }
+
+/* ══ 编辑器光标行弱高亮（Focus Mode 简化版） ══ */
+.editor-active-line {
+  background: var(--accent-soft);
+}
+
+/* ══ 骨架微光（loading 态） ══ */
+@keyframes sm-shimmer {
+  0% { opacity: 0.5; }
+  50% { opacity: 1; }
+  100% { opacity: 0.5; }
+}
+.skeleton-line {
+  background: var(--surface-sunken);
+  border-radius: var(--radius-sm);
+  animation: sm-shimmer 1.6s ease-in-out infinite;
+}
