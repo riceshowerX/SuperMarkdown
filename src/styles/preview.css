@@ -165,3 +165,39 @@
 .markdown-body .hljs-emphasis { font-style: italic; }
 .markdown-body .hljs-strong { font-weight: var(--weight-semibold); }
 .markdown-body .hljs-link { color: var(--md-link); text-decoration: underline; }
+
+/* ══ Mermaid 图表容器（客户端渲染为 SVG 后注入） ══ */
+.markdown-body .mermaid {
+  display: flex;
+  justify-content: center;
+  margin: var(--space-4) 0;
+  padding: var(--space-3);
+  overflow-x: auto;
+}
+.markdown-body .mermaid svg { max-width: 100%; height: auto; }
+/* 源码透传态（mermaid 尚未渲染或引擎加载前的瞬时回退） */
+.markdown-body .mermaid-src { margin: var(--space-4) 0; }
+.markdown-body .mermaid-error {
+  display: block;
+  color: var(--danger);
+  background: var(--surface-warm);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  margin: var(--space-4) 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+}
+
+/* ══ KaTeX 数学公式（HTML+MathML 由 markdown-it-katex 服务端渲染） ══ */
+.markdown-body .katex { color: inherit; font-size: 1.1em; }
+.markdown-body .katex-block {
+  display: block;
+  margin: var(--space-4) 0;
+  text-align: center;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: var(--space-2) 0;
+}
+.markdown-body .katex-display { margin: 0; }
+.markdown-body .katex-display > .katex { white-space: nowrap; }

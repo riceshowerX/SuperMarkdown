@@ -1,18 +1,23 @@
 import { useMemo, useRef } from 'react';
 import { useEditorStore } from '../../stores/editor.store';
+import { useUiStore } from '../../stores/ui.store';
 import { useDebouncedValue } from '../../hooks/useDebouncedValue';
 import { useScrollRole } from '../../hooks/useScrollSync';
+import { useMermaidRender } from '../../hooks/useMermaidRender';
 import { renderMarkdown } from '../../services/markdown/markdown.service';
 import { RENDER_DEBOUNCE_MS } from '../../config/constants';
 import PreviewErrorBoundary from './PreviewErrorBoundary';
 
-/** 预览区（UIUX-V2 §5.3）：300ms 防抖渲染 + sanitize 后注入 + 错误边界 + 滚动同步注册 */
+/** 预览区（UIUX-V2 §5.3）：300ms 防抖渲染 + sanitize 后注入 + Mermaid 客户端渲染 + 错误边界 + 滚动同步注册 */
 export default function PreviewPane() {
   const content = useEditorStore((s) => s.content);
   const docId = useEditorStore((s) => s.docId);
+  const theme = useUiStore((s) => s.theme);
   const debounced = useDebouncedValue(content, RENDER_DEBOUNCE_MS);
   const result = useMemo(() => renderMarkdown(debounced), [debounced]);
+  const containerRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
+  useMermaidRender(containerRef, result.html, theme);
   useScrollRole('preview', sectionRef);
 
   return (
@@ -23,7 +28,7 @@ export default function PreviewPane() {
         </div>
       ) : (
         <PreviewErrorBoundary key={docId ?? 'none'}>
-          <div className="markdown-body" dangerouslySetInnerHTML={{ __html: result.html }} />
+          <div ref={containerRef} className="markdown-body" dangerouslySetInnerHTML={{ __html: result.html }} />
         </PreviewErrorBoundary>
       )}
     </section>

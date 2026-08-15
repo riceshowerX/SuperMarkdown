@@ -2,6 +2,7 @@
 import './theme/init';
 import './styles/design-tokens.css';
 import './styles/preview.css';
+import 'katex/dist/katex.min.css';
 import './index.css';
 
 import { StrictMode } from 'react';

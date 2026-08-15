@@ -4,6 +4,7 @@ import { downloadBlob, buildExportFileName } from '../../utils/file';
 import { renderMarkdown } from '../markdown/markdown.service';
 import tokensCss from '../../styles/design-tokens.css?raw';
 import previewCss from '../../styles/preview.css?raw';
+import katexCss from 'katex/dist/katex.min.css?raw';
 
 /** 表格分隔行：仅含 |、-、:、空格，且以 | 开头（区别于普通分隔线 ---） */
 const TABLE_SEPARATOR_RE = /^\s*\|[\s:|-]*\|\s*$/gm;
@@ -65,9 +66,11 @@ export function buildExportHtml(options: {
   bodyHtml: string;
   tokensCss?: string;
   previewCss?: string;
+  katexCss?: string;
 }): string {
   const tokens = options.tokensCss ?? tokensCss;
   const preview = options.previewCss ?? previewCss;
+  const katex = options.katexCss ?? katexCss;
   const title = options.title || '无标题文档';
   const toggleScript = [
     '(function(){',
@@ -91,6 +94,7 @@ export function buildExportHtml(options: {
 <style>
 ${tokens}
 ${preview}
+${katex}
 .sm-export-shell { min-height: 100dvh; background: var(--bg); color: var(--fg); font-family: var(--font-body); }
 .sm-theme-toggle {
   position: fixed; right: var(--space-4); bottom: var(--space-4); z-index: 10;
@@ -116,10 +120,14 @@ function escapeHtml(str: string): string {
   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-/** 导出 HTML（AC-10：内联样式+内嵌图片，离线可打开） */
-export async function exportHtml(doc: Document): Promise<void> {
+/**
+ * 导出 HTML（AC-10：内联样式+内嵌图片，离线可打开）
+ * - bodyHtml 可选：传入预览区已渲染的 HTML（含 Mermaid SVG + KaTeX），缺省时回退 renderMarkdown。
+ *   Mermaid 为客户端渲染，仅预览 DOM 中已烘焙为 SVG；未渲染时回退源码块（离线仍可读）。
+ */
+export async function exportHtml(doc: Document, opts?: { bodyHtml?: string }): Promise<void> {
   try {
-    const { html } = renderMarkdown(doc.content);
+    const html = opts?.bodyHtml ?? renderMarkdown(doc.content).html;
     const full = buildExportHtml({ title: doc.title, bodyHtml: html });
     downloadBlob(new Blob([full], { type: 'text/html;charset=utf-8' }), buildExportFileName(doc.title, 'html'));
   } catch (err) {

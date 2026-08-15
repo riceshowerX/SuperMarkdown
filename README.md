@@ -51,6 +51,7 @@
 | **明暗双主题** | 一键切换（150ms 过渡）；偏好持久化；首次跟随系统；挂载前初始化防闪烁 |
 | **响应式布局** | 桌面三栏（侧边栏可折叠 + 编辑/预览 50/50 可拖拽）；移动端单栏 Tab + 抽屉 + 底部工具栏 |
 | **格式工具栏** | 14 个高频操作：加粗 / 斜体 / 行内代码 / 链接 / H1-H3 / 引用 / 代码块 / 三类列表 / 表格 / 分隔线 / 图片 |
+| **图形与公式** | Mermaid 流程图 / 序列图 / 甘特图 / 饼图（` ```mermaid ` 代码块自动渲染为 SVG，明暗主题跟随）；LaTeX 数学公式（`$...$` 行内 / `$$...$$` 块级，KaTeX 渲染） |
 
 **安全设计**：三层 XSS 防线（markdown-it `html:false` → DOMPurify 白名单 → 严格 CSP），任意输入不执行脚本；禁 eval / new Function。
 
@@ -72,7 +73,52 @@ npm run dev        # 开发服务器 → http://localhost:5173
 ```bash
 npm run build      # 产物输出到 dist/
 npm run preview    # 本地预览生产构建
-npm run test       # Vitest 单元测试（73+ 用例全绿）
+npm run test       # Vitest 单元测试（108+ 用例全绿）
+```
+
+---
+
+## 图形与公式
+
+Mermaid 与 LaTeX 全面支持，编辑区输入即可实时渲染。
+
+**Mermaid 流程图 / 序列图 / 甘特图 / 饼图**（```` ```mermaid ```` 代码块）：
+
+````markdown
+```mermaid
+graph TD
+  A[开始] --> B{条件}
+  B -->|是| C[处理]
+  B -->|否| D[结束]
+```
+
+```mermaid
+sequenceDiagram
+  Alice->>Bob: 你好
+  Bob-->>Alice: 你好呀
+```
+
+```mermaid
+gantt
+  title 项目计划
+  section 开发
+    需求分析 :a1, 2026-01-01, 3d
+    编码     :a2, after a1, 5d
+```
+
+```mermaid
+pie
+  "苹果" : 386
+  "香蕉" : 85
+```
+````
+
+**LaTeX 数学公式**（`$...$` 行内 / `$$...$$` 块级）：
+
+```markdown
+行内公式 $E=mc^2$ 与块级公式：
+
+$$\int_0^1 x\,dx = \frac{1}{2}$$
 ```
 
 ---
@@ -84,6 +130,8 @@ npm run test       # Vitest 单元测试（73+ 用例全绿）
 | 构建 | Vite + TypeScript | ^7.1.0 / ^5.8.0 |
 | 框架 | React + zustand | ^19.2.0 / ^5.0.6 |
 | 解析 | markdown-it + markdown-it-task-lists | ^14.1.0 / ^2.1.1 |
+| 图形 | Mermaid（流程图/序列图/甘特图/饼图） | ^11.16.1 |
+| 公式 | KaTeX + @vscode/markdown-it-katex | ^0.18.4 / ^1.1.2 |
 | 安全 | DOMPurify | ^3.2.7 |
 | 高亮 | highlight.js | ^11.11.1 |
 | 存储 | Dexie（IndexedDB） | ^4.0.0 |

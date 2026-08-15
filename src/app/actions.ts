@@ -24,7 +24,9 @@ export async function exportCurrentDocument(kind: 'html' | 'txt'): Promise<void>
   if (!doc) return;
   try {
     if (kind === 'html') {
-      await exportHtml(doc);
+      // 捕获预览区已渲染 HTML（含 Mermaid SVG + KaTeX），确保导出含图形/公式；预览未挂载时回退
+      const liveHtml = typeof document !== 'undefined' ? document.querySelector('.markdown-body')?.innerHTML : undefined;
+      await exportHtml(doc, liveHtml ? { bodyHtml: liveHtml } : undefined);
       useUiStore.getState().pushToast({ kind: 'success', title: '已导出 HTML', message: '文件已下载' });
     } else {
       await exportPlainText(doc);
