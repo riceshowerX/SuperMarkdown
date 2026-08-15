@@ -1,104 +1,128 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="660" viewBox="0 0 1200 660" font-family="Inter, 'Noto Sans SC', 'Segoe UI', sans-serif">
-  <title>SuperMarkdown 应用界面预览</title>
-  <desc>SuperMarkdown 三栏布局：侧边栏文档列表 + Markdown 编辑区 + 实时预览区</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="640" viewBox="0 0 1200 640" font-family="Inter, 'Noto Sans SC', 'Segoe UI', sans-serif">
+  <title>SuperMarkdown C 版界面预览</title>
+  <desc>SuperMarkdown C 版块面派：冷色系、chrome 退化、编辑器全宽可编辑、Cmd+K 核心入口</desc>
 
-  <rect x="0" y="0" width="1200" height="660" fill="#FAFAF9"/>
+  <!-- 应用背景（冷近白） -->
+  <rect x="0" y="0" width="1200" height="640" fill="#FCFCFD"/>
 
-  <!-- AppBar 44px -->
-  <rect x="0" y="0" width="1200" height="44" fill="#FFFFFF"/>
-  <line x1="0" y1="44" x2="1200" y2="44" stroke="#E7E5E4" stroke-width="1"/>
-  <circle cx="28" cy="22" r="9" fill="#0D9488"/>
-  <text x="44" y="27" font-size="14" font-weight="600" fill="#1C1917">SuperMarkdown</text>
-  <!-- AppBar 右侧按钮 -->
-  <rect x="1050" y="12" width="28" height="20" rx="4" fill="none" stroke="#D6D3D1" stroke-width="1.2"/>
-  <rect x="1088" y="12" width="28" height="20" rx="4" fill="none" stroke="#D6D3D1" stroke-width="1.2"/>
-  <rect x="1126" y="12" width="28" height="20" rx="4" fill="none" stroke="#D6D3D1" stroke-width="1.2"/>
-  <rect x="1164" y="12" width="28" height="20" rx="4" fill="#0D9488"/>
+  <!-- AppBar 40px（chrome 退化：薄） -->
+  <rect x="0" y="0" width="1200" height="40" fill="#FCFCFD"/>
+  <line x1="0" y1="40" x2="1200" y2="40" stroke="#EEEEF0" stroke-width="1"/>
+  <!-- Logo（弱化：小图标无强调色） -->
+  <rect x="20" y="13" width="14" height="14" rx="3" fill="none" stroke="#6B7280" stroke-width="1.4"/>
+  <line x1="24" y1="18" x2="30" y2="18" stroke="#6B7280" stroke-width="1.2"/>
+  <line x1="24" y1="22" x2="28" y2="22" stroke="#6B7280" stroke-width="1.2"/>
+  <!-- 面包屑：工作区 / 文档名 -->
+  <text x="42" y="25" font-size="13" fill="#6B7280">工作区</text>
+  <text x="92" y="25" font-size="13" fill="#D1D5DB">/</text>
+  <text x="102" y="25" font-size="13" font-weight="500" fill="#1F2024">欢迎使用 SuperMarkdown</text>
+  <!-- 右侧：Cmd+K chip + 导出 + 视图 Segmented + 主题 -->
+  <rect x="820" y="10" width="200" height="20" rx="6" fill="#F4F4F5" stroke="#EEEEF0" stroke-width="1"/>
+  <circle cx="834" cy="20" r="4" fill="none" stroke="#6B7280" stroke-width="1.2"/>
+  <line x1="837" y1="23" x2="840" y2="26" stroke="#6B7280" stroke-width="1.2"/>
+  <text x="846" y="24" font-size="11" fill="#6B7280">搜索或输入命令…</text>
+  <rect x="990" y="14" width="22" height="12" rx="2" fill="none" stroke="#D1D5DB" stroke-width="1"/>
+  <text x="995" y="23" font-size="9" fill="#6B7280">⌘K</text>
+  <!-- 导出 -->
+  <text x="1040" y="25" font-size="13" fill="#6B7280">导出</text>
+  <!-- 视图 Segmented（分屏高亮） -->
+  <rect x="1080" y="10" width="72" height="20" rx="5" fill="#F4F4F5"/>
+  <rect x="1084" y="13" width="20" height="14" rx="3" fill="#FFFFFF" stroke="#EEEEF0" stroke-width="0.8"/>
+  <rect x="1108" y="13" width="20" height="14" rx="3" fill="none"/>
+  <rect x="1132" y="13" width="20" height="14" rx="3" fill="none"/>
+  <!-- 主题（月亮） -->
+  <path d="M1158 16 a7 7 0 1 0 6 10 a5 5 0 0 1 -6 -10 z" fill="none" stroke="#6B7280" stroke-width="1.2"/>
 
-  <!-- Sidebar 240px -->
-  <rect x="0" y="44" width="240" height="588" fill="#FFFFFF"/>
-  <line x1="240" y1="44" x2="240" y2="632" stroke="#E7E5E4" stroke-width="1"/>
-  <rect x="16" y="62" width="208" height="34" rx="8" fill="#0D9488"/>
-  <text x="120" y="83" font-size="13" font-weight="500" fill="#FFFFFF" text-anchor="middle">新建文档</text>
+  <!-- Sidebar 232px（与主区同底，仅 1px 边框分层） -->
+  <line x1="232" y1="40" x2="232" y2="614" stroke="#EEEEF0" stroke-width="1"/>
   <!-- 搜索框 -->
-  <rect x="16" y="106" width="208" height="28" rx="6" fill="#F4F4F5"/>
-  <text x="30" y="124" font-size="12" fill="#A8A29E">搜索文档...</text>
-  <!-- 文档列表 -->
-  <rect x="16" y="146" width="208" height="40" rx="6" fill="#CCFBF1"/>
-  <rect x="16" y="146" width="3" height="40" fill="#0D9488"/>
-  <text x="30" y="170" font-size="13" font-weight="500" fill="#1C1917">欢迎使用 SuperMarkdown</text>
-  <text x="30" y="184" font-size="11" fill="#78716C">1,240 字 · 刚刚</text>
-  <rect x="16" y="194" width="208" height="40" rx="6"/>
-  <text x="30" y="218" font-size="13" fill="#1C1917">项目开发计划</text>
-  <text x="30" y="232" font-size="11" fill="#78716C">856 字 · 5 分钟前</text>
-  <rect x="16" y="242" width="208" height="40" rx="6"/>
-  <text x="30" y="266" font-size="13" fill="#1C1917">会议纪要</text>
-  <text x="30" y="280" font-size="11" fill="#78716C">320 字 · 1 小时前</text>
-  <rect x="16" y="290" width="208" height="40" rx="6"/>
-  <text x="30" y="314" font-size="13" fill="#1C1917">读书笔记</text>
-  <text x="30" y="328" font-size="11" fill="#78716C">2,018 字 · 昨天</text>
+  <rect x="16" y="56" width="200" height="28" rx="6" fill="#F4F4F5"/>
+  <circle cx="30" cy="70" r="4" fill="none" stroke="#9CA3AF" stroke-width="1.2"/>
+  <line x1="33" y1="73" x2="36" y2="76" stroke="#9CA3AF" stroke-width="1.2"/>
+  <text x="44" y="74" font-size="12" fill="#9CA3AF">搜索文档</text>
+  <!-- 新建文档（ghost：border + accent 文字） -->
+  <rect x="16" y="94" width="200" height="32" rx="6" fill="none" stroke="#EEEEF0" stroke-width="1"/>
+  <line x1="86" y1="110" x2="96" y2="110" stroke="#2563EB" stroke-width="1.4"/>
+  <line x1="91" y1="105" x2="91" y2="115" stroke="#2563EB" stroke-width="1.4"/>
+  <text x="104" y="114" font-size="13" font-weight="500" fill="#2563EB">新建文档</text>
+  <!-- 文档列表（纯文本无卡片；选中态 accent-soft 底，无竖线） -->
+  <rect x="16" y="138" width="200" height="40" rx="6" fill="#EFF6FF"/>
+  <text x="28" y="158" font-size="13" font-weight="500" fill="#1F2024">欢迎使用 SuperMarkdown</text>
+  <text x="28" y="172" font-size="11" fill="#9CA3AF">1,240 字 · 刚刚</text>
+  <text x="28" y="198" font-size="13" fill="#1F2024">项目开发计划</text>
+  <text x="28" y="212" font-size="11" fill="#9CA3AF">856 字 · 5 分钟前</text>
+  <text x="28" y="238" font-size="13" fill="#1F2024">会议纪要</text>
+  <text x="28" y="252" font-size="11" fill="#9CA3AF">320 字 · 1 小时前</text>
+  <text x="28" y="278" font-size="13" fill="#1F2024">读书笔记</text>
+  <text x="28" y="292" font-size="11" fill="#9CA3AF">2,018 字 · 昨天</text>
+  <!-- Sidebar 底部计数 -->
+  <line x1="16" y1="590" x2="216" y2="590" stroke="#F4F4F5" stroke-width="1"/>
+  <text x="16" y="606" font-size="11" fill="#9CA3AF">4 篇文档</text>
 
-  <!-- Editor 区 50% -->
-  <rect x="240" y="44" width="480" height="588" fill="#F4F4F5"/>
-  <text x="270" y="84" font-size="17" font-weight="600" fill="#0D9488">#</text>
-  <text x="288" y="84" font-size="17" font-weight="600" fill="#1C1917">欢迎使用 SuperMarkdown</text>
-  <text x="270" y="116" font-size="14" fill="#1C1917">一款</text>
-  <text x="308" y="116" font-size="14" font-weight="600" fill="#1C1917">打开即写</text>
-  <text x="380" y="116" font-size="14" fill="#1C1917">、</text>
-  <text x="394" y="116" font-size="14" font-weight="600" fill="#1C1917">图片自包含</text>
-  <text x="484" y="116" font-size="14" fill="#1C1917">的 Markdown 编辑器。</text>
-  <text x="270" y="140" font-size="14" fill="#57534E">粘贴图片自动转 base64 内嵌，单文件离线可分享。</text>
+  <!-- 编辑区（全宽可编辑，无 max-width 框）x=232-716 -->
+  <rect x="232" y="40" width="484" height="574" fill="#FFFFFF"/>
+  <text x="264" y="84" font-size="16" font-weight="700" fill="#2563EB">#</text>
+  <text x="280" y="84" font-size="16" font-weight="700" fill="#1F2024">欢迎使用 SuperMarkdown</text>
+  <text x="264" y="112" font-size="14" fill="#1F2024">一款打开即写、图片自包含的编辑器。</text>
+  <text x="264" y="132" font-size="13" fill="#6B7280">粘贴图片自动转 base64 内嵌，单文件离线可分享。</text>
   <!-- 列表 -->
-  <circle cx="278" cy="168" r="3" fill="#1C1917"/>
-  <text x="290" y="172" font-size="14" fill="#1C1917">分屏实时预览，所见即所得</text>
-  <circle cx="278" cy="192" r="3" fill="#1C1917"/>
-  <text x="290" y="196" font-size="14" fill="#1C1917">800ms 自动保存，告别丢稿焦虑</text>
-  <circle cx="278" cy="216" r="3" fill="#1C1917"/>
-  <text x="290" y="220" font-size="14" fill="#1C1917">明暗双主题，桌面移动双端适配</text>
-  <!-- 任务列表 -->
-  <rect x="272" y="244" width="12" height="12" rx="2" fill="#0D9488"/>
-  <path d="M274 249 L277 252 L282 247" stroke="#FFFFFF" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-  <text x="292" y="255" font-size="14" fill="#1C1917">编辑器、预览、导出全部离线可用</text>
+  <circle cx="272" cy="158" r="2.5" fill="#1F2024"/>
+  <text x="282" y="162" font-size="14" fill="#1F2024">分屏实时预览，所见即所得</text>
+  <circle cx="272" cy="182" r="2.5" fill="#1F2024"/>
+  <text x="282" y="186" font-size="14" fill="#1F2024">800ms 自动保存，告别丢稿焦虑</text>
+  <circle cx="272" cy="206" r="2.5" fill="#1F2024"/>
+  <text x="282" y="210" font-size="14" fill="#1F2024">明暗双主题，桌面移动双端适配</text>
+  <!-- 任务列表（勾选） -->
+  <rect x="268" y="228" width="12" height="12" rx="2" fill="#2563EB"/>
+  <path d="M270 233 L273 236 L278 231" stroke="#FFFFFF" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="288" y="239" font-size="14" fill="#1F2024">编辑、预览、导出全部离线可用</text>
   <!-- 引用 -->
-  <rect x="270" y="276" width="3" height="40" fill="#D6D3D1"/>
-  <text x="284" y="294" font-size="13" fill="#57534E">数据始终留在你的设备上，</text>
-  <text x="284" y="312" font-size="13" fill="#57534E">不上传任何服务器。</text>
+  <rect x="264" y="258" width="3" height="36" fill="#D6D3D1"/>
+  <text x="278" y="274" font-size="13" fill="#6B7280">数据始终留在你的设备上，</text>
+  <text x="278" y="290" font-size="13" fill="#6B7280">不上传任何服务器。</text>
   <!-- 代码块 -->
-  <rect x="270" y="330" width="420" height="110" rx="8" fill="#FFFFFF" stroke="#E7E5E4" stroke-width="1"/>
-  <circle cx="288" cy="350" r="5" fill="#F7C1C1"/>
-  <circle cx="306" cy="350" r="5" fill="#FAC775"/>
-  <circle cx="324" cy="350" r="5" fill="#C0DD97"/>
-  <text x="288" y="380" font-family="'JetBrains Mono', monospace" font-size="13" fill="#1C1917">npm install</text>
-  <text x="288" y="404" font-family="'JetBrains Mono', monospace" font-size="13" fill="#1C1917">npm run dev</text>
-  <text x="288" y="428" font-family="'JetBrains Mono', monospace" font-size="13" fill="#57534E"># 打开 http://localhost:5173</text>
+  <rect x="264" y="308" width="420" height="96" rx="8" fill="#F4F4F5" stroke="#EEEEF0" stroke-width="1"/>
+  <circle cx="280" cy="324" r="4" fill="#F7C1C1"/>
+  <circle cx="296" cy="324" r="4" fill="#FAC775"/>
+  <circle cx="312" cy="324" r="4" fill="#C0DD97"/>
+  <text x="280" y="350" font-family="'JetBrains Mono', monospace" font-size="12" fill="#1F2024">npm install</text>
+  <text x="280" y="370" font-family="'JetBrains Mono', monospace" font-size="12" fill="#1F2024">npm run dev</text>
+  <text x="280" y="390" font-family="'JetBrains Mono', monospace" font-size="12" fill="#6B7280"># 打开 http://localhost:5173</text>
+  <!-- 块手柄（hover 显示，示意） -->
+  <g opacity="0.5">
+    <circle cx="252" cy="78" r="1.5" fill="#9CA3AF"/>
+    <circle cx="252" cy="84" r="1.5" fill="#9CA3AF"/>
+    <circle cx="256" cy="78" r="1.5" fill="#9CA3AF"/>
+    <circle cx="256" cy="84" r="1.5" fill="#9CA3AF"/>
+  </g>
 
-  <!-- Preview 区 50% -->
-  <rect x="720" y="44" width="480" height="588" fill="#FFFFFF"/>
-  <text x="760" y="98" font-size="26" font-weight="600" fill="#1C1917">欢迎使用 SuperMarkdown</text>
-  <line x1="760" y1="112" x2="1120" y2="112" stroke="#E7E5E4" stroke-width="1"/>
-  <text x="760" y="146" font-size="15" fill="#1C1917">一款</text>
-  <text x="802" y="146" font-size="15" font-weight="600" fill="#1C1917">打开即写</text>
-  <text x="878" y="146" font-size="15" fill="#1C1917">、</text>
-  <text x="892" y="146" font-size="15" font-weight="600" fill="#1C1917">图片自包含</text>
-  <text x="986" y="146" font-size="15" fill="#1C1917">的编辑器。</text>
-  <text x="760" y="174" font-size="14" fill="#57534E">粘贴图片自动转 base64 内嵌，单文件离线可分享。</text>
-  <rect x="760" y="196" width="8" height="8" rx="2" fill="#0D9488"/>
-  <text x="780" y="204" font-size="14" fill="#1C1917">分屏实时预览，所见即所得</text>
-  <rect x="760" y="220" width="8" height="8" rx="2" fill="#0D9488"/>
-  <text x="780" y="228" font-size="14" fill="#1C1917">800ms 自动保存，告别丢稿焦虑</text>
-  <rect x="760" y="244" width="8" height="8" rx="2" fill="#0D9488"/>
-  <text x="780" y="252" font-size="14" fill="#1C1917">明暗双主题，桌面移动双端适配</text>
-  <rect x="756" y="276" width="3" height="44" fill="#D6D3D1"/>
-  <text x="770" y="296" font-size="13" fill="#57534E">数据始终留在你的设备上，不上传任何服务器。</text>
-  <rect x="760" y="340" width="320" height="86" rx="8" fill="#F4F4F5" stroke="#E7E5E4" stroke-width="1"/>
-  <text x="780" y="368" font-family="'JetBrains Mono', monospace" font-size="13" fill="#1C1917">npm install</text>
-  <text x="780" y="392" font-family="'JetBrains Mono', monospace" font-size="13" fill="#1C1917">npm run dev</text>
-  <text x="780" y="416" font-family="'JetBrains Mono', monospace" font-size="13" fill="#57534E"># 打开 http://localhost:5173</text>
+  <!-- Resizer（中间分隔，默认透明 hover 显示） -->
+  <line x1="716" y1="40" x2="716" y2="614" stroke="#EEEEF0" stroke-width="1"/>
 
-  <!-- StatusBar 28px -->
-  <rect x="0" y="632" width="1200" height="28" fill="#FFFFFF"/>
-  <line x1="0" y1="632" x2="1200" y2="632" stroke="#E7E5E4" stroke-width="1"/>
-  <text x="16" y="650" font-size="12" fill="#78716C">1,240 字 · 约 3 分钟</text>
-  <circle cx="1136" cy="646" r="4" fill="#16A34A"/>
-  <text x="1148" y="650" font-size="12" fill="#16A34A">已保存</text>
+  <!-- 预览区 x=720-1200（markdown-body 居中阅读带） -->
+  <rect x="720" y="40" width="480" height="574" fill="#FFFFFF"/>
+  <text x="760" y="98" font-size="24" font-weight="700" fill="#1F2024">欢迎使用 SuperMarkdown</text>
+  <line x1="760" y1="112" x2="1120" y2="112" stroke="#EEEEF0" stroke-width="1"/>
+  <text x="760" y="142" font-size="14" fill="#1F2024">一款打开即写、图片自包含的编辑器。</text>
+  <text x="760" y="166" font-size="13" fill="#6B7280">粘贴图片自动转 base64 内嵌，单文件离线可分享。</text>
+  <circle cx="768" cy="194" r="2.5" fill="#2563EB"/>
+  <text x="778" y="198" font-size="14" fill="#1F2024">分屏实时预览，所见即所得</text>
+  <circle cx="768" cy="218" r="2.5" fill="#2563EB"/>
+  <text x="778" y="222" font-size="14" fill="#1F2024">800ms 自动保存，告别丢稿焦虑</text>
+  <circle cx="768" cy="242" r="2.5" fill="#2563EB"/>
+  <text x="778" y="246" font-size="14" fill="#1F2024">明暗双主题，桌面移动双端适配</text>
+  <rect x="756" y="268" width="3" height="36" fill="#D6D3D1"/>
+  <text x="770" y="284" font-size="13" fill="#6B7280">数据始终留在你的设备上，</text>
+  <text x="770" y="300" font-size="13" fill="#6B7280">不上传任何服务器。</text>
+  <rect x="760" y="318" width="320" height="76" rx="8" fill="#F4F4F5" stroke="#EEEEF0" stroke-width="1"/>
+  <text x="780" y="346" font-family="'JetBrains Mono', monospace" font-size="12" fill="#1F2024">npm install</text>
+  <text x="780" y="366" font-family="'JetBrains Mono', monospace" font-size="12" fill="#1F2024">npm run dev</text>
+  <text x="780" y="386" font-family="'JetBrains Mono', monospace" font-size="12" fill="#6B7280"># 打开 http://localhost:5173</text>
+
+  <!-- StatusBar 26px（chrome 退化：薄） -->
+  <rect x="0" y="614" width="1200" height="26" fill="#FCFCFD"/>
+  <line x1="0" y1="614" x2="1200" y2="614" stroke="#EEEEF0" stroke-width="1"/>
+  <text x="16" y="631" font-size="11" fill="#9CA3AF">1,240 字 · 约 3 分钟</text>
+  <circle cx="1140" cy="627" r="3.5" fill="#16A34A"/>
+  <text x="1150" y="631" font-size="11" fill="#16A34A">已保存</text>
 </svg>
