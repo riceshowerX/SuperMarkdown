@@ -17,6 +17,9 @@ let saveTimer: ReturnType<typeof setTimeout> | null = null;
 let idleTimer: ReturnType<typeof setTimeout> | null = null;
 let pending: { content: string; revision: number } | null = null;
 
+/** 首次保存成功 Toast 一次性标记（UIUX-V2 §5.5：防骚扰） */
+let firstSaveToastSent = false;
+
 interface EditorState {
   docId: string | null;
   content: string;
@@ -58,6 +61,7 @@ export const useEditorStore = create<EditorState>()((set, get) => ({
       saveTimer = null;
     }
     pending = null;
+    firstSaveToastSent = false;
     set({
       docId: doc.id,
       content: doc.content,
@@ -74,6 +78,7 @@ export const useEditorStore = create<EditorState>()((set, get) => ({
       saveTimer = null;
     }
     pending = null;
+    firstSaveToastSent = false;
     set({ docId: null, content: '', revision: 0, lastSavedRevision: 0, saveStatus: 'idle', failCount: 0 });
   },
 
@@ -114,6 +119,11 @@ export const useEditorStore = create<EditorState>()((set, get) => ({
       await (await getStorageService()).updateDocument({ id: st.docId, title, content: payload.content });
       set({ saveStatus: 'saved', lastSavedRevision: payload.revision, failCount: 0 });
       scheduleSaveIdle();
+      // 首次保存成功发一条一次性 Toast（有实际内容才提示，空文档不打扰）
+      if (!firstSaveToastSent && payload.content.trim() !== '') {
+        firstSaveToastSent = true;
+        useUiStore.getState().pushToast({ kind: 'success', title: '已自动保存' });
+      }
       await useDocumentsStore.getState().refreshList();
     } catch (err) {
       const failCount = get().failCount + 1;

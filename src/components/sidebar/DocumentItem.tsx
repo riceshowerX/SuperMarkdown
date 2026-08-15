@@ -12,7 +12,7 @@ interface Props {
   onNavigate?: () => void;
 }
 
-/** 列表项：选中 accent-soft 底 + 左侧 3px 竖线；hover 显示操作菜单（PAGES §3） */
+/** 列表项（C 版纯文本行；PAGES §3）：选中 accent-soft 底 + wt-medium；hover bg-block-hover 显示操作菜单 */
 export default function DocumentItem({ doc, onNavigate }: Props) {
   const activeDocId = useDocumentsStore((s) => s.activeDocId);
   const searchQuery = useDocumentsStore((s) => s.searchQuery);
@@ -76,11 +76,12 @@ export default function DocumentItem({ doc, onNavigate }: Props) {
   return (
     <div
       className={`group relative flex min-h-11 items-center rounded-md transition-colors duration-150 md:min-h-10 ${
-        isActive ? 'bg-accent-soft shadow-[inset_3px_0_0_var(--accent)]' : 'hover:bg-surface-sunken'
+        isActive ? 'bg-accent-soft' : 'hover:bg-block-hover'
       }`}
     >
       <button
         type="button"
+        data-doc-id={doc.id}
         onClick={() => {
           void setActiveDocId(doc.id);
           onNavigate?.();
@@ -88,7 +89,7 @@ export default function DocumentItem({ doc, onNavigate }: Props) {
         className="flex min-w-0 flex-1 items-center gap-2 self-stretch rounded-md px-2 text-left"
         aria-current={isActive ? 'true' : undefined}
       >
-        <FileText size={16} strokeWidth={1.8} className="shrink-0 text-fg-2" aria-hidden />
+        <FileText size={16} strokeWidth={1.8} className={`shrink-0 ${isActive ? 'text-fg' : 'text-fg-2'}`} aria-hidden />
         <span className="min-w-0 flex-1">
           {renaming ? (
             <input
@@ -108,7 +109,7 @@ export default function DocumentItem({ doc, onNavigate }: Props) {
               onClick={(e) => e.stopPropagation()}
             />
           ) : (
-            <span className="block truncate tx-sm text-fg">
+            <span className={`block truncate tx-sm ${isActive ? 'wt-medium text-fg' : 'text-fg'}`}>
               <Highlight text={doc.title} query={searchQuery} />
             </span>
           )}

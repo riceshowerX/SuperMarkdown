@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import type { Theme, ViewMode, MobileMode, ConfirmState, ToastItem } from '../types/models';
-import { THEME_STORAGE_KEY, TOAST_DURATION_MS } from '../config/constants';
+import { THEME_STORAGE_KEY } from '../config/constants';
 
 function getInitialTheme(): Theme {
   try {
@@ -28,6 +28,17 @@ interface UiState {
   mobileMode: MobileMode;
   setMobileMode: (mode: MobileMode) => void;
 
+  /** 命令面板（Cmd+K）开关 */
+  commandPaletteOpen: boolean;
+  setCommandPaletteOpen: (open: boolean) => void;
+  /** 快捷键面板（?）开关 */
+  shortcutsOpen: boolean;
+  setShortcutsOpen: (open: boolean) => void;
+
+  /** 打字机模式（光标行居中滚动） */
+  typewriterMode: boolean;
+  toggleTypewriter: () => void;
+
   splitRatio: number;
   setSplitRatio: (ratio: number) => void;
 
@@ -54,6 +65,13 @@ export const useUiStore = create<UiState>()((set, get) => ({
   mobileMode: 'edit',
   setMobileMode: (mode) => set({ mobileMode: mode }),
 
+  commandPaletteOpen: false,
+  setCommandPaletteOpen: (open) => set({ commandPaletteOpen: open }),
+  shortcutsOpen: false,
+  setShortcutsOpen: (open) => set({ shortcutsOpen: open }),
+  typewriterMode: false,
+  toggleTypewriter: () => set({ typewriterMode: !get().typewriterMode }),
+
   splitRatio: 0.5,
   setSplitRatio: (ratio) => set({ splitRatio: Math.min(0.7, Math.max(0.3, ratio)) }),
 
@@ -65,9 +83,7 @@ export const useUiStore = create<UiState>()((set, get) => ({
   pushToast: (toast) => {
     const id = ++toastSeq;
     set({ toasts: [...get().toasts, { ...toast, id }] });
-    if (toast.kind !== 'error') {
-      setTimeout(() => get().dismissToast(id), TOAST_DURATION_MS);
-    }
+    // 自动消失由 ToastCard 持有（支持 hover 暂停）；error 常驻不自动消失
   },
   dismissToast: (id) => set({ toasts: get().toasts.filter((t) => t.id !== id) }),
 }));

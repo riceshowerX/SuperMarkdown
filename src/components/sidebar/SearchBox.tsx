@@ -15,7 +15,7 @@ export default function SearchBox() {
         onChange={(e) => setSearchQuery(e.target.value)}
         placeholder="搜索文档"
         aria-label="搜索文档"
-        className="h-11 w-full rounded-md border border-border bg-bg pl-8 pr-8 tx-sm text-fg placeholder:text-fg-2 outline-none focus-visible:border-transparent md:h-9"
+        className="h-11 w-full rounded-md border border-border bg-surface-sunken pl-8 pr-8 tx-sm text-fg placeholder:text-fg-2 outline-none focus-visible:border-transparent md:h-9"
       />
       {searchQuery && (
         <button

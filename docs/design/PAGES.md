@@ -1,221 +1,335 @@
-# SuperMarkdown 页面设计提示词（PAGES.md）
+# SuperMarkdown PAGES.md — C 版「块面派」页面提示词
 
-> 面向前端 Agent 的直接实现提示。所有颜色/尺寸引用 `design-tokens.css` 的 Token，**禁止硬编码**。
-> 图标一律 `lucide-react`（`stroke="currentColor"`，strokeWidth 1.8，尺寸 16/20/24px），**禁止 emoji**。
-> 组件状态覆盖 9 态（default/hover/focus/active/disabled/loading/error/empty/success）。
-> 明暗两态由 `:root[data-theme="light|dark"]` 自动切换，本文件仅标注需注意的差异点。
-
----
-
-## 1. AppShell（应用外壳 · 三栏）
-
-**路由**：`/`（桌面三栏）；`/` 移动端单栏（同一组件响应式切换）
-
-**结构（flex 纵向）**：
-```
-<AppShell>                        /* height: 100vh; display: flex; flex-direction: column */
-  ├─ <AppBar />                    /* height: var(--layout-appbar-h); flex-shrink: 0 */
-  ├─ <MainArea />                  /* flex: 1; display: flex; min-height: 0 */
-  │   ├─ <Sidebar />               /* 桌面: width var(--layout-sidebar-w); 移动: 抽屉 */
-  │   ├─ <EditorPane />            /* flex: 1; min-width: var(--layout-min-pane-w) */
-  │   ├─ <Divider />               /* 拖拽分隔条 width 4px; hover: var(--accent) */
-  │   └─ <PreviewPane />           /* flex: 1; min-width: var(--layout-min-pane-w) */
-  └─ <StatusBar />                 /* height: var(--layout-statusbar-h); flex-shrink: 0 */
-```
-
-**Token**：背景 `--bg`；边框 `--border`；分隔条 hover `--accent`
-**明暗差异**：无（自动切换）
-**交互**：
-- 桌面 ≥768px 默认分屏（编辑+预览并排）；可拖拽分隔条（最小 320px/侧）
-- 模式切换（Columns2/Pencil/Eye 图标按钮）在 AppBar：分屏 ↔ 仅编辑 ↔ 仅预览
-- 移动 <768px 强制单栏：AppBar 左「菜单」开抽屉；编辑/预览顶部 Tab 切换
-- 滚动同步：分屏下编辑滚动 → 预览按段落锚点对齐滚动（150ms 防抖），失败静默降级
-- 空状态：无打开文档时，主区显示「创建你的第一个文档」+ Primary 按钮（`FilePlus2`）
+> 版本：v3.0 · 日期：2026-08-15 · 设计师：颜好看
+> 基于：DESIGN.md（C 版全局设计源）+ design-tokens.css（运行时真源）
+> 供前端 Agent 逐区域实现。每区域含：组件结构 / Token 引用 / 明暗两态 / 交互要点 / 9 态覆盖
 
 ---
 
-## 2. AppBar（顶栏 · 高 44px）
+## 区域索引
+
+1. [AppShell — 整体外壳](#1-appshell)
+2. [Toolbar — 顶栏（chrome 退化）](#2-toolbar)
+3. [Sidebar — 侧边栏（纯文本行）](#3-sidebar)
+4. [EditorPane — 编辑区（块感排版）](#4-editorpane)
+5. [PreviewPane — 预览区](#5-previewpane)
+6. [CommandPalette — Cmd+K 核心入口](#6-commandpalette)
+7. [StatusBar — 状态栏（chrome 退化）](#7-statusbar)
+8. [SplitPane — 分屏分隔](#8-splitpane)
+9. [MobileShell — 移动端](#9-mobileshell)
+
+---
+
+## 1. AppShell
+
+**组件文件**：`src/components/layout/AppShell.tsx`
+
+**结构**：`flex h-dvh flex-col overflow-hidden` → `[Toolbar] [flex-1: Sidebar + Editor/Preview/Split] [StatusBar]`
+
+**Token 引用**：
+- `bg-bg text-fg font-body`（根容器）
+- 桌面：Sidebar 常驻 + SplitPane；移动：MobileShell + 抽屉
+
+**明暗两态**：
+- 明：`--bg #FCFCFD`（冷近白），整体冷净
+- 暗：`--bg #19191C`（冷中性灰），亮度递进分层
+
+**C 版要点**：
+- chrome 退化：Toolbar 高 `var(--layout-appbar-h)` 40px（v1.1=48），StatusBar 高 `var(--layout-statusbar-h)` 26px（v1.1=30）
+- 侧边栏与主区**同底色**（`--bg`），仅靠 1px `--border` 右边框分层——不靠色差分层
+- 整体无强阴影，浮层才用 `--elev-popover`
+
+**9 态覆盖**：
+- Loading：骨架屏 `.skeleton-line`（`--surface-sunken` + shimmer）
+- Error：`InitError` 组件——`--danger` 标题 + `--muted` 描述 + 重试按钮（`--accent` 底）
+- Empty：无文档时侧边栏引导"创建第一个文档"
+
+---
+
+## 2. Toolbar
+
+**组件文件**：`src/components/toolbar/Toolbar.tsx`
+
+**C 版改动**：chrome 退化——减薄至 40px + 弱化视觉
 
 **结构**：
 ```
-<AppBar>                          /* height: var(--layout-appbar-h); bg: var(--bg); border-bottom: 1px solid var(--border);
-                                     display: flex; align-items: center; gap: var(--space-2); padding: 0 var(--space-3) */
-  ├─ [Logo] 16px                  /* 图标 + 「SuperMarkdown」--fg semibold */
-  ├─ [文档标题]                    /* 可点击进入重命名态（input 行内替换，Enter 确认/Esc 取消） */
-  ├─ <Spacer />                   /* flex: 1 */
-  ├─ [搜索 Search]                /* 移动端隐藏，仅 Sidebar 搜索 */
-  ├─ [导出 Download]              /* 无内容 disabled */
-  ├─ [模式 Columns2]              /* 分屏/单栏循环 */
-  └─ [主题 Sun/Moon]              /* 明暗切换 */
+header[h:var(--layout-appbar-h)=40px] border-b[border-border]
+  ├ [移动] Menu 图标按钮（打开抽屉）
+  ├ 面包屑：工作区 / 文档名（点击重命名）
+  ├ flex-1（弹性留白）
+  ├ Cmd+K 触发胶囊（核心入口，见 §6）
+  ├ 视图分段（桌面：分屏/编辑/预览）
+  └ 主题切换图标
 ```
 
-**Token**：`--bg` / `--border` / `--fg` / `--muted`；图标按钮 hover `--surface-warm`，focus `--focus-ring`
-**按钮规范**：icon 20px；点击区 ≥36×36（桌面），移动 ≥44×44；hover 150ms
-**明暗差异**：`Sun` 图标在明色显示（点击转暗），`Moon` 在暗色显示（点击转明）——图标表示"将切换到的模式"或"当前模式"二选一，保持一致即可（建议表示当前模式）
-**交互**：
-- 主题切换：`document.documentElement.dataset.theme` 切换 + `localStorage('sm-theme')` 持久化 + `<meta name="color-scheme">` 同步 + 150ms 背景/文字过渡
-- 重命名：点击标题 → input（value=当前名，全选）→ Enter 提交 / Esc 还原 / 失焦提交；提交后 Toast「已重命名」
+**Token 引用**：
+- 容器：`bg-bg border-b border-border`（无阴影，1px 底边框极淡）
+- 面包屑：`工作区` `tx-sm text-fg-2` → `/` `text-border` → `文档名` `tx-sm wt-medium text-fg`
+- Cmd+K 胶囊：`bg-surface-sunken border-border rounded-md` → hover `bg-block-hover`
+- 视图分段容器：`bg-surface-sunken rounded-sm p-0.5`；激活项 `bg-surface-raised text-accent shadow-[var(--elev-ring)]`
+- 主题图标：`text-fg-2` → hover `text-fg`
+
+**明暗两态**：
+- 明：`--bg #FCFCFD` 底，`--border #EEEEF0` 极淡冷灰底线
+- 暗：`--bg #19191C` 底，`--border #2E2E32` 冷灰底线
+
+**交互要点**：
+- 顶栏 40px 比 v1.1 薄 8px——chrome 退化的核心体现
+- Logo 弱化：v1.1 有 `FileText` 图标 + "SuperMarkdown" 文字 → C 版缩为小圆点 + 文字（或仅面包屑，Logo 移入侧边栏）
+- 导出菜单保留但弱化（`ChevronDown` 更小）
+
+**9 态**：Loading（导出中禁用+spinner）/ Error（导出失败 toast）/ Populated / Disabled（无内容时导出灰）
 
 ---
 
-## 3. Sidebar（侧边栏 · 宽 240/260px，可折叠 48px）
+## 3. Sidebar
+
+**组件文件**：`src/components/sidebar/Sidebar.tsx` + `DocumentItem.tsx` + `SearchBox.tsx`
+
+**C 版改动**：纯文本行（非卡片）+ 与主区同底
 
 **结构**：
 ```
-<Sidebar>                         /* width: var(--layout-sidebar-w); bg: var(--surface); border-right: 1px solid var(--border);
-                                     display: flex; flex-direction: column; overflow: hidden */
-  ├─ [Search 输入框]              /* h 36px; 圆角 var(--radius-md); 聚焦 focus-ring; 实时过滤列表 */
-  ├─ [新建文档 Primary 按钮]       /* FilePlus2 20px + 「新建文档」; bg var(--accent)/--on-accent */
-  ├─ <DocList />                  /* flex: 1; overflow-y: auto */
-  │   └─ <DocItem />              /* 高 40px; 结构: FileText 16px + 标题 sm + 修改时间 xs muted;
-  │                                     hover: 显示 MoreHorizontal「⋯」菜单（重命名/导出/删除） */
-  ├─ <Spacer />
-  └─ [底部: 回收站 / 设置]        /* 可选；当前 MVP 可只留「回收站」占位或省略 */
+aside[w:var(--layout-sidebar-w)=232px] bg-bg border-r[border-border]
+  ├ SearchBox（搜索框）
+  ├ 新建文档按钮（Secondary/Ghost，非 Primary 大蓝按钮）
+  ├ DocumentList（纯文本行列表）
+  │   └ DocumentItem × N
+  │       ├ hover: bg-block-hover + 左侧显 GripVertical 手柄区
+  │       └ 选中: bg-accent-soft + 标题 wt-medium
+  └ 底栏：N 篇文档 + 折叠按钮
 ```
 
-**Token**：`--surface` / `--border` / `--fg` / `--muted` / `--fg-2` / `--surface-sunken` / `--accent-soft` / `--accent` / `--radius-md` / `--focus-ring`
-**DocItem 三态**：
-- default：透明底，`--fg` 标题 + `--muted` 时间
-- hover：`--surface-sunken` 底
-- selected：`--accent-soft` 底 + `box-shadow: inset 3px 0 0 var(--accent)`（左竖线）+ 标题 `--weight-medium`
-**明暗差异**：无（自动）
-**交互**：
-- 新建：创建「未命名文档」→ 进入编辑态 → 标题自动聚焦；Toast「已创建」
-- 打开：点击加载内容；当前项 accent 高亮
-- 删除：确认对话框（`--danger` 主按钮「删除」+ 次级「取消」）→ 删除后跳转相邻文档 → Toast「已删除 · 撤销」5s 可恢复
-- 搜索：输入实时过滤，命中片段高亮 `--accent-soft`
-- 空状态：无文档时显示「创建第一个文档」引导文案 + Primary 按钮
-- 折叠：桌面可折叠为 48px（仅图标列）；移动端收为抽屉（`PanelLeftClose`/`PanelLeft`）
+**Token 引用**：
+- 容器：`bg-bg border-r border-border`（与主区同底 `#FCFCFD`/`#19191C`）
+- 搜索框：`bg-surface-sunken border-border rounded-md`
+- 新建按钮：C 版改为 Ghost/Secondary（`text-accent border-border`），**不用 Primary 大蓝按钮**（chrome 退化，强调色克制）
+- 文档行：默认 `text-fg-2 tx-sm`；hover `bg-block-hover text-fg`；选中 `bg-accent-soft text-fg wt-medium`
+- 小文档图标（lucide `FileText` 14px）：`text-fg-2`
+
+**明暗两态**：
+- 明：行 hover `--block-hover-bg #F9FAFB`，选中 `--accent-soft` 极淡蓝
+- 暗：行 hover `--block-hover-bg #252528`，选中 `rgba(59,130,246,0.12)`
+
+**C 版要点**：
+- **纯文本行，非卡片**——v1.1 无卡片但 v2 方案 B 有卡片；C 版回归极简文本行
+- 行高 32px（紧凑），圆角 `--radius-sm` 6px（仅 hover/选中态显圆角底）
+- 无阴影、无边框包裹每行——靠 hover 底色 + 选中底色分层
+- 收起态：`w-[var(--layout-sidebar-w-collapsed)=48px]`，仅图标列
+
+**9 态**：Loading（骨架行）/ Empty（"创建第一个文档"引导）/ Populated / Edge（超长标题 `truncate`）
 
 ---
 
-## 4. 编辑器区（EditorPane）
+## 4. EditorPane
+
+**组件文件**：`src/components/editor/EditorPane.tsx` + `TextareaEditor.tsx` + `FormatToolbar.tsx`
+
+**C 版改动**：块感排版（hover 显拖拽手柄）+ 编辑区纯白
 
 **结构**：
 ```
-<EditorPane>                      /* flex: 1; min-width: var(--layout-min-pane-w); bg: var(--surface-sunken);
-                                     display: flex; flex-direction: column; position: relative */
-  ├─ <FormatToolbar />            /* 悬浮胶囊: position absolute/sticky top 8px; bg var(--surface); box-shadow var(--elev-ring);
-                                     圆角 var(--radius-lg); 按钮 32×32; 滚动时淡出 opacity .4 → hover 1 */
-  └─ <Editor />                   /* flex: 1; overflow-y: auto; padding: var(--space-8) var(--space-6);
-                                     font: var(--font-body) var(--text-base)/var(--leading-body); color: var(--fg);
-                                     ::selection { background: var(--md-selection) } */
+section[flex-1] bg-surface
+  ├ [桌面] FormatToolbar（浮动，hover 浮现）
+  ├ SaveErrorBar（保存失败内联条，可选）
+  ├ TextareaEditor（textarea，块感排版）
+  └ [移动] FormatToolbar（底部固定）
 ```
 
-**Token**：`--surface-sunken` / `--surface` / `--elev-ring` / `--fg` / `--muted` / `--md-selection` / `--accent-soft`（光标行）
-**工具栏按钮**（lucide-react，16px）：
-- 标题：`Heading1` `Heading2` `Heading3`
-- 行内：`Bold` `Italic`
-- 块级：`Quote` `Code2`（代码块）`Code`（行内）`Table` `List` `ListOrdered` `ListChecks` `ImagePlus` `Link` `Minus`（分隔线）
-- 分组：组间距 8px，组间 4px `--border-soft` 竖分隔
-**明暗差异**：无（自动）；暗色下编辑器 `--surface-sunken #171412` 与预览 `--bg #1C1917` 层次分明
-**交互**：
-- 输入实时触发预览渲染（防抖 150ms）
-- 光标行高亮（Focus Mode）：当前行 `background: var(--accent-soft)` 弱高亮（可开关）
-- 图片粘贴：Clipboard API 检测 image → <2MB 转 base64 内嵌 / >2MB Toast 提示转存 → 光标处插入 `![](描述)` → Toast「图片已插入」
-- 格式按钮插入 Markdown 语法包裹选中区；全部操作配快捷键（Ctrl/Cmd+B 等，`?` 唤起快捷键面板）
-- 自动保存：输入停 800ms 防抖 → 写盘
-- 空文档：显示轻量引导「用 Markdown 开始写作」+ 语法速览（不打断输入）
-- Edge：>1000 行虚拟化；超长行软换行不横向滚动
+**Token 引用**：
+- 容器：`bg-surface`（`#FFFFFF` 明 / `#212125` 暗）
+- textarea：`font-mono` 或 `font-body`（C 版编辑器用 Inter 正文）；`tx-editor` 15px；`leading-editor` 1.7
+- 内容列居中：`max-w-[var(--layout-editor-max)=760px] mx-auto px-12`
+- 光标行高亮：`.editor-active-line` → `var(--accent-line)` 极淡蓝（≤4%）
+- 选区：`::selection` → `var(--md-selection)`
+
+**明暗两态**：
+- 明：`--surface #FFFFFF` 纯白画布，`--fg #1F2024` 冷墨正文
+- 暗：`--surface #212125` 冷灰画布，`--fg #E6E6E9` off-white
+
+**C 版块感排版（核心特征）**：
+- 每个 Markdown 块（标题/段落/列表/代码）是独立可操作单元
+- **hover 显拖拽手柄**：块左侧 `--block-gutter-w`(24px) 区显 `GripVertical`(lucide, 16px)
+  - 手柄默认 `var(--block-handle)` `#C5C7CC`（淡，hover 前）
+  - 块 hover 时手柄提亮 `var(--block-handle-active)` `#9CA3AF`
+  - 块 hover 底 `var(--block-hover-bg)` `#F9FAFB`
+- 拖拽手柄 → 块重排（150ms `--ease-standard`）
+- **注意**：textarea 原生不支持块拖拽，此为 v3.1 增强方向；当前版本先做视觉块感（行 hover 底色 + 手柄占位），拖拽交互后续迭代
+
+**FormatToolbar 浮动条**：
+- 桌面：浮动在编辑区顶部，`hover` 区显（800ms 延迟隐藏）
+- `bg-surface border-border rounded-full shadow-[var(--elev-raised)]`
+- 图标：`GripVertical`/`Bold`/`Italic`/`Heading`/`List`/`Link`/`Code`/`Image`（lucide，16px，`text-fg-2` → hover `text-fg`）
+
+**9 态**：Loading（骨架）/ Empty（"开始书写…"占位提示）/ Error（SaveErrorBar）/ Populated / Edge（超长行 wrap）
 
 ---
 
-## 5. 预览区（PreviewPane）
+## 5. PreviewPane
+
+**组件文件**：`src/components/preview/PreviewPane.tsx` + `PreviewErrorBoundary.tsx`
+
+**结构**：`section[flex-1] bg-surface overflow-auto` → 内容列居中 `max-w-[var(--layout-preview-max)=720px]`
+
+**Token 引用**（Markdown 渲染，全部 C-extension）：
+- 正文：`tx-reading`(16px) `leading-reading`(1.75) `text-fg` `font-body`
+- H1：`tx-3xl`(28px) `wt-bold`(700) `trk-h1`(`-0.02em`) `text-fg`
+- H2：`tx-xl`(18px) `wt-semibold` `trk-h2`
+- H3：`tx-lg`(16px) `wt-medium` `trk-h3`
+- 代码块：`bg-surface-sunken` `font-mono` `tx-sm` `text-fg` `rounded-md` `border-border`
+- 行内代码：`bg-md-code-bg` `text-md-inline-code-fg` `font-mono` `rounded-sm` `px-1`
+- 引用：`border-l-2 border-md-quote-border` `bg-surface-warm` `text-md-quote-fg` `pl-4 italic`
+- 链接：`text-md-link` → hover `text-md-link-hover` → visited `text-md-link-visited`
+- 表格：`border-md-table-border`，表头 `bg-md-table-header-bg`
+- 任务列表：勾选框 `bg-md-task-checked`（= `--accent` 焦点蓝）
+- 分隔线：`border-md-hr`
+
+**明暗两态**：全部 C-extension Token 有明暗两值，自动切换
+
+**9 态**：Loading（骨架）/ Error（PreviewErrorBoundary 降级提示）/ Populated / Edge（超长代码块横向滚动）
+
+---
+
+## 6. CommandPalette
+
+**组件文件**：`src/components/common/CommandPalette.tsx` + `PaletteRow.tsx` + `paletteItems.ts`
+
+**C 版改动**：升格为核心交互入口（搜索 + 命令 + 文档跳转 + 主题切换）
 
 **结构**：
 ```
-<PreviewPane>                     /* flex: 1; min-width: var(--layout-min-pane-w); bg: var(--bg);
-                                     overflow-y: auto; display: flex; justify-content: center */
-  └─ <Article />                  /* width: 100%; max-width: var(--layout-content-max); padding: var(--space-8) var(--space-6);
-                                     font: var(--font-body) var(--text-lg)/var(--leading-body); color: var(--fg) */
+fixed inset-0 z-modal（scrim + 居中面板）
+  ├ scrim: rgba(0,0,0,0.03)（极淡，编辑区仍可见）
+  └ 面板[560px] bg-surface rounded-lg shadow-[var(--elev-popover)] palette-enter
+      ├ 搜索输入区[h:44px]：Search 图标 + input + 光标闪烁
+      ├ 分隔线 border-border-soft
+      ├ 结果列表（分组）：
+      │   ├ 分组标签（"命令" / "文档"）tx-xs text-fg-2 trk-caps
+      │   └ PaletteRow × N[h:36px]
+      │       ├ 图标（16px text-fg-2）
+      │       ├ 标签 tx-sm text-fg
+      │       └ 快捷键徽章 kbd font-mono tx-xs text-fg-2 bg-surface-sunken
+      └ 底部提示：↑↓ 选择 · ↵ 确认 · esc 关闭
 ```
 
-**Markdown 元素样式**（全部用 `--md-*`，见 MASTER.md §9 表）：
-- 标题：`--text-3xl/2xl/xl` + `--weight-semibold` + `--tracking-title` + `--leading-title`；段前距 `--space-6`，段后 `--space-3`
-- 段落：段距 `--space-2`~`--space-3`
-- 代码块：`--md-code-bg` + 1px `--md-code-border` + `--radius-md` + `--font-mono` 13px + `--leading-code`；顶部语言标签 xs `--muted`
-- 行内代码：`--md-code-bg` + `--md-inline-code-fg` + `--radius-sm` + padding 0 `--space-1`
-- 表格：表头 `--md-table-header-bg` + `--weight-medium`；行分隔 `--md-table-border`；单元格 padding `--space-2`
-- 引用：`border-left: 3px solid var(--md-quote-border)` + `--surface-warm` 底 + `--md-quote-fg` + `--radius-md` + padding `--space-3` `--space-4`
-- 链接：`--md-link` + underline；hover `--md-link-hover`；visited `--md-link-visited`
-- 任务列表：checkbox 勾选 `--md-task-checked`；`ListChecks` 语义
-- 分隔线：`border-top: 1px solid var(--md-hr)`
-**明暗差异**：无（自动）；暗色代码块 `--md-code-bg #171412` 与预览底 `#1C1917` 靠 1px 边框区分
-**交互**：
-- 实时渲染（150ms 防抖）；滚动同步锚点对齐编辑区
-- 图片懒加载 + 点击放大（lightbox）
-- 长文：可选阅读进度条（顶部 2px `--accent`）
+**Token 引用**：
+- 面板：`bg-surface` `rounded-[var(--radius-lg)=12px]` `shadow-[var(--elev-popover)]`
+- scrim：`rgba(0,0,0,0.03)`（极淡，C 版不抢编辑区）
+- 选中行：`bg-accent-soft`（`rgba(37,99,235,0.08)` 极淡蓝）
+- 搜索光标：`var(--accent)` 闪烁（1.1s）
+- 分组标签：`tx-xs` `text-fg-2` `trk-caps`（ALL CAPS + 0.06em）
+- 快捷键徽章：`font-mono` `tx-xs` `bg-surface-sunken` `rounded-sm`
+
+**明暗两态**：
+- 明：面板 `#FFFFFF`，选中行极淡蓝，scrim 极淡黑
+- 暗：面板 `#212125`，选中行 `rgba(59,130,246,0.12)`，scrim `rgba(0,0,0,0.5)`
+
+**交互要点**：
+- 打开：120ms `scale(0.98)→1` + fade（`.palette-enter`），缓动 `--ease-standard`
+- 搜索：输入即筛选——同时搜索命令 + 文档名
+- `↑↓` 导航，`↵` 执行，`esc` 关闭
+- 选中行滚动入视（`scrollIntoView({ block: 'nearest' })`）
+- **命令分组**（C 版新增）：命令（新建/导出/主题/视图）+ 文档（跳转）
+- 关闭后焦点回触发元素
+
+**9 态**：Loading（搜索中 spinner）/ Empty（"无匹配结果"）/ Populated / Edge（超长命令名 truncate）
 
 ---
 
-## 6. 状态栏（StatusBar · 高 28px）
+## 7. StatusBar
+
+**组件文件**：`src/components/common/StatusBar.tsx`
+
+**C 版改动**：chrome 退化——减薄至 26px 或缩为右下角圆点
 
 **结构**：
 ```
-<StatusBar>                       /* height: var(--layout-statusbar-h); bg: var(--bg); border-top: 1px solid var(--border-soft);
-                                     display: flex; align-items: center; gap: var(--space-4); padding: 0 var(--space-3);
-                                     font-size: var(--text-xs); color: var(--muted) */
-  ├─ [字数统计]                   /* 「1,234 字」--font-mono 数字 */
-  ├─ [行/列]                      /* 「L12 C34」（可选） */
-  ├─ <Spacer />
-  └─ [保存状态]                   /* 三态指示器，见下 */
+footer[h:var(--layout-statusbar-h)=26px] border-t[border-border-soft] bg-bg
+  ├ 字数统计（font-mono tabular-nums text-muted）
+  ├ [sm+] 词数 / 行数 / 阅读时长
+  ├ 临时存储提示（fallbackMode 时 text-warn）
+  ├ flex-1
+  ├ 打字机开关（Focus 图标，accent-soft 选中态）
+  └ 保存状态：圆点 text-success / 脉冲 text-warn / 错误条 text-danger
 ```
 
-**保存状态三态**（自动保存反馈核心）：
-| 状态 | 触发 | 视觉 |
-|---|---|---|
-| 保存中 | 输入停 800ms 后、写入中 | `CloudUpload` 12px + `--warn`「保存中」 |
-| 已保存 | 写入完成 | `CheckCircle2` 12px + `--success`「已保存」（2s 后淡为仅图标） |
-| 保存失败 | 写入失败 | `AlertCircle` 12px + `--danger`「保存失败」常驻 + Toast「重试」按钮 |
+**Token 引用**：
+- 容器：`bg-bg border-t border-border-soft`（顶边框极淡，比 `--border` 更淡）
+- 文字：`tx-xs text-muted` `font-mono tabular-nums`
+- 已保存圆点：`h-1.5 w-1.5 rounded-full bg-success`
+- 打字机选中：`bg-accent-soft text-accent`
 
-**明暗差异**：无（自动）
-**交互**：
-- 失败态不打断输入：内容保留内存，下次输入重新触发保存
-- 字数统计含中英文混合计数（中文按字、英文按词计为 1）
-- 移动端：状态栏信息并入 AppBar 右侧（空间有限），仅保留保存状态 + 字数
+**明暗两态**：
+- 明：`--bg #FCFCFD`，圆点 `--success #16A34A`
+- 暗：`--bg #19191C`，圆点 `--success #4ADE80`
+
+**C 版要点**：
+- 高度 26px（v1.1=30），更薄
+- **chrome 退化可选**：若进一步退化，可将状态栏内容移入顶栏右侧或缩为右下角小圆点（无独立栏）
+- 当前保留独立薄栏（26px），保证字数统计可见
+
+**9 态**：Loading（保存脉冲 `.save-pulse`）/ Error（`--danger` + 重试）/ Populated / Edge（0 字时空圆点）
 
 ---
 
-## 7. 移动端单栏（<768px 覆盖）
+## 8. SplitPane
 
-**结构**：
-```
-<MobileShell>                     /* height: 100dvh; flex column */
-  ├─ <AppBar>                     /* 高 44px: [菜单] [文档标题]  [主题] */
-  ├─ <ModeTabs>                   /* 高 44px: [编辑 Pencil] [预览 Eye] — 选中项 --accent 下划线 2px */
-  ├─ <Pane>                       /* flex: 1: 编辑 或 预览（全宽单栏） */
-  ├─ <FormatBar>                  /* 仅编辑模式显示: 底部条 h 52px; bg var(--surface); border-top var(--border);
-                                     按钮 44×44: Bold Italic Heading1 Heading2 Quote Code2 (+ 溢出「+」菜单) */
-  └─ <SafeArea>                   /* padding-bottom: env(safe-area-inset-bottom) */
-```
+**组件文件**：`src/components/layout/SplitPane.tsx` + `Resizer.tsx`
 
-**Token**：`--bg` / `--surface` / `--border` / `--accent` / `--surface-sunken`
-**明暗差异**：无（自动）
-**交互**：
-- 侧边栏：AppBar 左「菜单」→ 抽屉（左侧滑入，宽 85vw 上限 320px，遮罩 `rgba(0,0,0,.4)`，点遮罩/Esc 关闭）
-- 编辑/预览：顶部 Tab 切换；滚动位置各自保持
-- 格式工具栏：底部条拇指可达（44×44 点击区）；滚动编辑时自动隐藏、触碰编辑区唤回
-- 图片粘贴：移动端同样支持（Clipboard API）
-- 触摸：所有交互 ≥44×44；禁 hover-only 交互
-- 删除/导出等低频操作收进文档「⋯」菜单
+**结构**：`flex` → `[EditorPane flex-ratio] [Resizer] [PreviewPane flex-ratio]`
+
+**Token 引用**：
+- Resizer：`w-1 bg-transparent` → hover `bg-border`（极淡冷灰线）
+- 拖拽中：`bg-accent`（焦点蓝，拖拽反馈）
+
+**C 版要点**：
+- 分隔线极淡——默认透明，hover 才显 `--border`，拖拽中显 `--accent`
+- 无明显拖拽手柄视觉（chrome 退化）
+- 最小 pane 宽：`var(--layout-min-pane-w)` 320px
+
+**明暗两态**：明 hover `#EEEEF0`，暗 hover `#2E2E32`
 
 ---
 
-## 8. 组件状态覆盖清单（全项目共用）
+## 9. MobileShell
 
-| 组件 | Loading | Empty | Error | Populated | Edge |
-|---|---|---|---|---|---|
-| 文档列表 | 骨架行 ×3（`--surface-sunken` 微光） | 「创建第一个文档」引导 | 加载失败「重试」 | 正常列表 | 超长标题截断 |
-| 编辑器 | 骨架（首次打开） | 「用 Markdown 开始写作」 | 保存失败状态栏+Toast | 正常编辑 | >1000 行虚拟化 |
-| 预览区 | 骨架 | 空文档提示 | 渲染失败降级源码 | 正常渲染 | 图片加载失败占位 |
-| 导出 | spinner | disabled（无内容） | Toast 失败+重试 | 正常导出 | 大文档进度条 |
-| 删除 | — | — | 删除失败 Toast | 确认对话框 | 删除后撤销 5s |
+**组件文件**：`src/components/layout/MobileShell.tsx`
+
+**结构**：单栏 → 侧边栏抽屉（左滑出）+ 编辑/预览切换
+
+**Token 引用**：
+- 抽屉：`bg-bg shadow-[var(--elev-raised)]`，scrim `.scrim` `rgba(0,0,0,0.4)`
+- 底部格式条：`bg-surface border-t border-border`
+
+**C 版要点**：
+- <768px 单栏，侧边栏抽屉化
+- Cmd+K 面板适配：宽度 `90vw`，或底部 ActionSheet（可选）
+- 格式条移至底部固定，触摸可达（≥44px 高）
+- 触摸目标 ≥44×44px
+
+**9 态**：Loading / Empty / Populated / Edge（小屏标题溢出 truncate）
 
 ---
 
-## 附：与 SPEC.md 的对接点（供前端核对）
+## 给前端的实施优先级
 
-- 图标包：`lucide-react`（架构师 Spec 已锁定，与 UIUX.md 建议一致）
-- 编辑器内核：textarea + CodeMirror 6 / Monaco（架构师定）；本页样式均以外部容器 Token 描述，内核无关
-- 数据流：文档状态（列表/当前/草稿）由架构师状态管理方案提供；UI 只消费状态与回调
-- 主题初始化：读取 `localStorage('sm-theme')` → `prefers-color-scheme` fallback，在 React 挂载前设置 `data-theme` 防闪烁
+### Phase 1：换 Token 即生效（零代码改动）
+直接替换 `design-tokens.css` → 所有引用 `var(--*)` 的组件自动冷化：
+- 颜色：Teal→Blue、暖纸→冷白
+- 间距/圆角/字号：自动更新
+- 补全 `--surface-raised`（修复未定义 bug）
+
+### Phase 2：chrome 退化（调 Token + 微调组件）
+- `--layout-appbar-h` 48→40
+- `--layout-statusbar-h` 30→26
+- `--layout-sidebar-w` 248→232
+- Toolbar：移除强边框视觉，Logo 缩小
+- Sidebar：文档行改纯文本（移除卡片阴影如有）
+
+### Phase 3：C 版特征功能（需开发）
+- CommandPalette 升格：增加命令分组 + 文档跳转 + 主题切换命令
+- 块感排版（v3.1）：EditorPane hover 显 `GripVertical` 手柄（先视觉占位，拖拽交互后续）
+
+### Phase 4：工具类补充（已完成）
+- index.css 已新增：`--color-block-handle` / `--color-block-hover` / `.wt-bold` / `.trk-h1` `.trk-h2` `.trk-h3`

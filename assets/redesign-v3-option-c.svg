@@ -1,0 +1,160 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 640" font-family="'Inter','Noto Sans SC',sans-serif">
+  <!-- ════════ OPTION C · 块面派 (Notion 极简) ════════ -->
+  <!-- 纯白 + 极淡冷灰分层，块感排版，Cmd+K 为核心入口，chrome 退到最弱 -->
+
+  <!-- 主背景：冷近白 -->
+  <rect width="1200" height="640" fill="#FCFCFD"/>
+
+  <!-- ── 侧边栏（与主区同底，仅 1px 边框分层，纯文本行非卡片） ── -->
+  <line x1="232" y1="0" x2="232" y2="640" stroke="#EEEEF0"/>
+  <!-- 工作区 -->
+  <circle cx="24" cy="26" r="3.5" fill="#2563EB"/>
+  <text x="34" y="30" font-size="13" font-weight="500" fill="#1F2024">SuperMarkdown</text>
+  <!-- 搜索行（可点击，极淡底） -->
+  <g transform="translate(8,48)">
+    <rect width="216" height="28" rx="6" fill="#F4F4F5"/>
+    <g transform="translate(10,9)" stroke="#9CA3AF" stroke-width="1.3" fill="none" stroke-linecap="round">
+      <circle cx="4" cy="4" r="3.5"/><line x1="6.5" y1="6.5" x2="9" y2="9"/>
+    </g>
+    <text x="28" y="18.5" font-size="13" fill="#9CA3AF">搜索或输入命令…</text>
+    <rect x="184" y="6" width="24" height="16" rx="3" fill="#E5E7EB"/>
+    <text x="196" y="17.5" font-family="'JetBrains Mono',monospace" font-size="10" fill="#9CA3AF" text-anchor="middle">⌘K</text>
+  </g>
+  <!-- 文档行（纯文本 + 小图标，hover 显 ⋮⋮） -->
+  <!-- 行1 选中 -->
+  <g transform="translate(0,90)">
+    <rect x="8" y="0" width="216" height="28" rx="6" fill="#F4F4F5"/>
+    <g transform="translate(18,8)" fill="none" stroke="#6B7280" stroke-width="1.2">
+      <rect x="0" y="0" width="11" height="13" rx="1.5"/><line x1="2.5" y1="4" x2="8.5" y2="4"/><line x1="2.5" y1="7" x2="8.5" y2="7"/><line x1="2.5" y1="10" x2="6.5" y2="10"/>
+    </g>
+    <text x="36" y="19" font-size="13" font-weight="500" fill="#1F2024">SuperMarkdown 设计备忘</text>
+  </g>
+  <text x="36" y="137" font-size="13" fill="#6B7280">写作的本质</text>
+  <text x="36" y="163" font-size="13" fill="#6B7280">本周写作计划</text>
+  <text x="36" y="189" font-size="13" fill="#6B7280">极简主义读书笔记</text>
+  <text x="36" y="215" font-size="13" fill="#6B7280">命令面板交互设计</text>
+  <text x="36" y="241" font-size="13" fill="#6B7280">导出模板整理</text>
+
+  <!-- 侧边栏底部新建 -->
+  <g transform="translate(8,604)">
+    <rect width="216" height="28" rx="6" fill="none" stroke="#EEEEF0"/>
+    <g transform="translate(10,9)" stroke="#6B7280" stroke-width="1.4" stroke-linecap="round" fill="none">
+      <line x1="5" y1="1" x2="5" y2="9"/><line x1="1" y1="5" x2="9" y2="5"/>
+    </g>
+    <text x="28" y="18.5" font-size="13" fill="#6B7280">新建文档</text>
+    <text x="200" y="17" font-family="'JetBrains Mono',monospace" font-size="10" fill="#9CA3AF" text-anchor="end">⌘N</text>
+  </g>
+
+  <!-- ── 顶部 chrome（退到最弱：仅面包屑 + 两图标） ── -->
+  <g transform="translate(252,24)">
+    <text font-size="13" fill="#9CA3AF">工作区</text>
+    <text x="48" font-size="13" fill="#D1D5DB">/</text>
+    <text x="58" font-size="13" font-weight="500" fill="#4B5563">SuperMarkdown 设计备忘</text>
+  </g>
+  <!-- 右侧：主题 + 更多 -->
+  <g transform="translate(1116,18)" stroke="#9CA3AF" stroke-width="1.3" fill="none" stroke-linecap="round">
+    <path d="M9 2 A5 5 0 1 0 9 12 A4 4 0 0 1 9 2 Z"/>
+  </g>
+  <g transform="translate(1148,22)" fill="#9CA3AF">
+    <circle cx="0" cy="0" r="1.6"/><circle cx="5" cy="0" r="1.6"/><circle cx="10" cy="0" r="1.6"/>
+  </g>
+
+  <!-- ── 编辑区（纯白，块感排版） ── -->
+  <!-- H1（块 + 精确负字距） -->
+  <text x="280" y="86" font-size="30" font-weight="700" fill="#1F2024" letter-spacing="-0.6">SuperMarkdown 设计备忘</text>
+  <!-- 块拖拽手柄（hover 浮现示意，半透明） -->
+  <g opacity="0.5" transform="translate(254,98)">
+    <circle cx="0" cy="0" r="1.4" fill="#9CA3AF"/><circle cx="4" cy="0" r="1.4" fill="#9CA3AF"/>
+    <circle cx="0" cy="5" r="1.4" fill="#9CA3AF"/><circle cx="4" cy="5" r="1.4" fill="#9CA3AF"/>
+  </g>
+
+  <!-- ── Cmd+K 命令面板（核心交互入口，浮动居中 modal） ── -->
+  <!-- 极淡 scrim -->
+  <rect x="232" y="0" width="968" height="640" fill="#000000" opacity="0.03"/>
+  <!-- 面板 -->
+  <defs>
+    <filter id="popSh" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="12" stdDeviation="24" flood-color="#000000" flood-opacity="0.13"/>
+    </filter>
+  </defs>
+  <g transform="translate(340,128)" filter="url(#popSh)">
+    <rect width="520" height="300" rx="12" fill="#FFFFFF" stroke="#EEEEF0"/>
+    <!-- 搜索输入 -->
+    <g transform="translate(0,0)">
+      <g transform="translate(20,18)" stroke="#9CA3AF" stroke-width="1.5" fill="none" stroke-linecap="round">
+        <circle cx="6" cy="6" r="5"/><line x1="9.5" y1="9.5" x2="13" y2="13"/>
+      </g>
+      <text x="44" y="30" font-size="15" fill="#1F2024">切换主题</text>
+      <!-- 光标 -->
+      <rect x="124" y="16" width="2" height="18" fill="#2563EB">
+        <animate attributeName="opacity" values="1;0;1" dur="1.1s" repeatCount="indefinite"/>
+      </rect>
+    </g>
+    <line x1="0" y1="52" x2="520" y2="52" stroke="#F4F4F5"/>
+    <!-- 分组标签 -->
+    <text x="20" y="70" font-size="11" font-weight="500" fill="#9CA3AF" letter-spacing="0.06em">命令</text>
+    <!-- 结果行 ×4 -->
+    <g transform="translate(0,80)">
+      <rect x="8" y="0" width="504" height="36" rx="6" fill="#F4F4F5"/>
+      <g transform="translate(20,9)" fill="none" stroke="#6B7280" stroke-width="1.3">
+        <path d="M9 2 A5 5 0 1 0 9 12 A4 4 0 0 1 9 2 Z"/>
+      </g>
+      <text x="44" y="23" font-size="14" font-weight="500" fill="#1F2024">切换主题（明 / 暗）</text>
+      <text x="500" y="23" font-family="'JetBrains Mono',monospace" font-size="11" fill="#9CA3AF" text-anchor="end">⌘⇧L</text>
+    </g>
+    <g transform="translate(0,120)">
+      <g transform="translate(20,9)" stroke="#6B7280" stroke-width="1.3" fill="none" stroke-linecap="round">
+        <line x1="6" y1="2" x2="6" y2="10"/><line x1="2" y1="6" x2="10" y2="6"/>
+      </g>
+      <text x="44" y="23" font-size="14" fill="#374151">新建文档</text>
+      <text x="500" y="23" font-family="'JetBrains Mono',monospace" font-size="11" fill="#9CA3AF" text-anchor="end">⌘N</text>
+    </g>
+    <g transform="translate(0,156)">
+      <g transform="translate(20,9)" stroke="#6B7280" stroke-width="1.3" fill="none" stroke-linecap="round">
+        <path d="M2 8 L6 4 L9 7 L5 11"/><line x1="7" y1="3" x2="9" y2="1"/>
+      </g>
+      <text x="44" y="23" font-size="14" fill="#374151">分屏模式</text>
+      <text x="500" y="23" font-family="'JetBrains Mono',monospace" font-size="11" fill="#9CA3AF" text-anchor="end">⌘⇧S</text>
+    </g>
+    <g transform="translate(0,192)">
+      <g transform="translate(20,9)" stroke="#6B7280" stroke-width="1.3" fill="none" stroke-linecap="round">
+        <path d="M2 7 L5 10 L10 3"/>
+      </g>
+      <text x="44" y="23" font-size="14" fill="#374151">导出为 HTML</text>
+    </g>
+    <!-- 分组：文档 -->
+    <text x="20" y="248" font-size="11" font-weight="500" fill="#9CA3AF" letter-spacing="0.06em">文档</text>
+    <g transform="translate(0,258)">
+      <g transform="translate(20,4)" fill="none" stroke="#6B7280" stroke-width="1.2">
+        <rect x="0" y="0" width="11" height="13" rx="1.5"/><line x1="2.5" y1="4" x2="8.5" y2="4"/><line x1="2.5" y1="7" x2="8.5" y2="7"/>
+      </g>
+      <text x="44" y="14" font-size="14" fill="#374151">打开文档：写作的本质</text>
+    </g>
+    <!-- 底部提示 -->
+    <line x1="0" y1="282" x2="520" y2="282" stroke="#F4F4F5"/>
+    <text x="20" y="296" font-size="11" fill="#9CA3AF">↑↓ 选择   ↵ 确认   esc 关闭</text>
+    <rect x="430" y="288" width="36" height="14" rx="3" fill="#F4F4F5"/>
+    <text x="448" y="298" font-family="'JetBrains Mono',monospace" font-size="9" fill="#9CA3AF" text-anchor="middle">esc</text>
+  </g>
+
+  <!-- 编辑器内容（面板下方探出，块感） -->
+  <text x="280" y="448" font-size="20" font-weight="600" fill="#1F2024" letter-spacing="-0.3">设计原则</text>
+  <text x="280" y="478" font-size="15" fill="#374151">块即单元。每一段文字、每一个标题都是独立可操作的块。</text>
+  <!-- 无序列表块 -->
+  <g transform="translate(280,498)">
+    <circle cx="5" cy="7" r="2" fill="#9CA3AF"/>
+    <text x="18" y="11" font-size="15" fill="#374151">分屏 / 编辑 / 预览，三态即切换</text>
+  </g>
+  <g transform="translate(280,522)">
+    <circle cx="5" cy="7" r="2" fill="#9CA3AF"/>
+    <text x="18" y="11" font-size="15" fill="#374151">命令面板 ⌘K 是一切操作的入口</text>
+  </g>
+  <g transform="translate(280,546)">
+    <circle cx="5" cy="7" r="2" fill="#9CA3AF"/>
+    <text x="18" y="11" font-size="15" fill="#374151">暗色为冷中性灰，不暖不冷</text>
+  </g>
+
+  <!-- 极薄状态指示（chrome 退到最弱，无独立状态栏，仅右下角小点） -->
+  <circle cx="1160" cy="624" r="3" fill="#5B9F6B"/>
+  <text x="1148" y="628" font-size="11" fill="#9CA3AF" text-anchor="end">已保存</text>
+</svg>

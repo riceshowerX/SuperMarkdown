@@ -35,6 +35,12 @@ export function insertText(value: string, selStart: number, selEnd: number, text
   return { value: newValue, start: cursor, end: cursor };
 }
 
+/** 光标所在行号（0 起；纯函数，供光标行高亮/打字机模式） */
+export function computeActiveLine(value: string, selectionStart: number): number {
+  const safe = Math.max(0, Math.min(selectionStart, value.length));
+  return value.slice(0, safe).split('\n').length - 1;
+}
+
 /** 包裹选区 */
 function wrapSelection(
   value: string,

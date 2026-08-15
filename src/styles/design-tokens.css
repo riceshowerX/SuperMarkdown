@@ -1,35 +1,39 @@
 /* ============================================================
-   SuperMarkdown Design Tokens v1.0
+   SuperMarkdown Design Tokens v3.0 — C 版「块面派」(Notion 极简)
    四层架构：A1-identity / A2-semantic+structure / B-slot / C-extension
    明暗双主题（默认跟随 :root 为明色）
-   来源：UIUX.md §3/§4 — Phase 2 锁定，色值与命名零偏差
+   来源：UIUX-V3-MINIMAL-3OPTIONS.md（用户选定 C 版深化）
    硬编码禁令：本文件是唯一颜色/尺寸来源，业务代码一律引用 var()
+   与 v1.1 差异：暖色 Teal→冷色 Blue、暖纸→冷白、chrome 退化（appbar/statusbar 减薄）、
+                 新增块面派专属 Token（block-handle / block-hover-bg）、补全 --surface-raised
+   命名体系：零破坏，全部保留 v1.1 Token 名，仅改值 + 新增
    ============================================================ */
 
 /* ─────────────────────────────────────────────
-   明色主题（默认）— 冷白基底
+   明色主题（默认）— 冷白 + 冷中性炭（chrome 与画布近乎同色，仅 1px 边框分层）
    ───────────────────────────────────────────── */
 :root,
 :root[data-theme="light"] {
   /* ══ A1-identity（品牌核心） ══ */
-  --bg: #FAFAF9;            /* 应用背景（暖白） */
-  --surface: #FFFFFF;       /* 卡片/侧边栏/面板 */
-  --surface-sunken: #F4F4F5;/* 编辑区下沉底、代码块底 */
-  --fg: #1C1917;            /* 主文本（暖深灰，非纯黑） */
-  --muted: #57534E;         /* 次级文本 */
-  --accent: #0D9488;        /* 品牌强调色 Teal */
-  --border: #E7E5E4;        /* 默认边框（暖灰） */
+  --bg: #FCFCFD;            /* chrome 底（冷近白，与画布差异极小=chrome 退到最弱） */
+  --surface: #FFFFFF;       /* 画布：编辑区/预览区，纯白 */
+  --surface-sunken: #F4F4F5;/* 内嵌块底（代码块/引用/输入框/选中行/骨架）— 冷淡灰 */
+  --surface-raised: #FFFFFF;/* 浮起面（分段控件激活态/卡片）— 与画布同色，靠 ring 分层 */
+  --fg: #1F2024;            /* 主文本（冷墨，非纯黑） */
+  --muted: #6B7280;         /* 次级文本（冷灰，≥4.5:1） */
+  --accent: #2563EB;        /* 品牌强调色 焦点蓝（仅 Cmd+K 选中/光标/链接，每屏≤2处） */
+  --border: #EEEEF0;       /* 默认边框（极淡冷灰） */
 
   /* ══ A2-semantic（语义色） ══ */
   --success: #16A34A;       /* 已保存 */
   --warn: #D97706;          /* 保存中/警告 */
   --danger: #DC2626;        /* 保存失败/删除 */
-  --info: #2563EB;          /* 信息提示 */
+  --info: #2563EB;          /* 信息提示（与 accent 同色，冷系统一） */
 
   /* ══ A2-structure（结构） ══ */
   --radius-sm: 6px;
   --radius-md: 8px;
-  --radius-lg: 12px;
+  --radius-lg: 12px;         /* C 版圆角略收（v1.1=14），块面感更利落 */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -38,44 +42,53 @@
   --space-6: 24px;
   --space-8: 32px;
   --space-10: 40px;
+  --space-12: 48px;
 
   /* ══ B-slot（组件插槽） ══ */
-  --fg-2: #78716C;               /* 三级文本/元数据 */
-  --surface-warm: #FFF7ED;       /* 引用块底（暖橙极淡） */
-  --border-soft: #F0EFED;        /* 行分隔 */
-  --accent-hover: #0F766E;       /* accent 悬停 */
-  --accent-active: #115E59;      /* accent 激活 */
-  --accent-soft: #CCFBF1;        /* accent 弱背景（选中态底） */
+  --fg-2: #9CA3AF;               /* 三级文本/元数据（冷灰；仅 ≥14px 或装饰性，小字勿用） */
+  --surface-warm: #F7F7F9;       /* hover 底/引用块底（名保留兼容，值改冷灰） */
+  --border-soft: #F4F4F5;        /* 行分隔（与 sunken 同，极淡） */
+  --accent-hover: #1D4ED8;       /* accent 悬停 */
+  --accent-active: #1E40AF;      /* accent 激活 */
+  --accent-soft: rgba(37, 99, 235, 0.08); /* accent 弱背景（选中态底，极淡蓝） */
+  --accent-line: rgba(37, 99, 235, 0.04); /* 光标行高亮（≤4%，极淡） */
   --on-accent: #FFFFFF;          /* accent 上的前景 */
-  --focus-ring: rgba(13, 148, 136, 0.35); /* 焦点环色 */
+  --focus-ring: rgba(37, 99, 235, 0.30); /* 焦点环色 */
 
   /* ══ C-extension（Markdown 专属） ══ */
-  --md-code-bg: #F4F4F5;         /* 行内代码/代码块底 */
-  --md-code-fg: #1C1917;         /* 代码前景 */
-  --md-code-border: #E7E5E4;     /* 代码块边框 */
-  --md-table-header-bg: #FAFAF9; /* 表格表头底 */
-  --md-table-border: #D6D3D1;    /* 表格分隔线 */
-  --md-quote-border: #D6D3D1;    /* 引用左侧竖线 */
-  --md-quote-fg: #57534E;        /* 引用文字 */
-  --md-link: #2563EB;            /* 文档链接 */
+  --md-code-bg: #F4F4F5;         /* 行内代码/代码块底（冷淡灰） */
+  --md-code-fg: #1F2024;        /* 代码前景（冷墨） */
+  --md-code-border: #E5E7EB;    /* 代码块边框 */
+  --md-table-header-bg: #F9FAFB;/* 表格表头底 */
+  --md-table-border: #E5E7EB;    /* 表格分隔线 */
+  --md-quote-border: #D1D5DB;    /* 引用左侧竖线（冷灰） */
+  --md-quote-fg: #6B7280;        /* 引用文字 */
+  --md-link: #2563EB;            /* 文档链接（= accent） */
   --md-link-hover: #1D4ED8;      /* 文档链接悬停 */
-  --md-link-visited: #6D28D9;    /* 文档链接已访问 */
-  --md-hr: #D6D3D1;              /* 分隔线 */
-  --md-selection: rgba(13, 148, 136, 0.22); /* 编辑选区 */
-  --md-task-checked: #0D9488;    /* 任务列表勾选 */
-  --md-inline-code-fg: #9A3412;  /* 行内代码文字（暖赭） */
+  --md-link-visited: #1E3A8A;   /* 已访问（冷深蓝，去紫） */
+  --md-hr: #E5E7EB;              /* 分隔线 */
+  --md-selection: rgba(37, 99, 235, 0.15); /* 编辑选区 */
+  --md-task-checked: #2563EB;    /* 任务列表勾选（= accent 焦点蓝） */
+  --md-inline-code-fg: #4B5563;  /* 行内代码文字（冷中性灰） */
+
+  /* ══ C-extension · 块面派专属（v3.0 新增） ══ */
+  --block-handle: #C5C7CC;         /* 块拖拽手柄 ⋮⋮ 默认色（淡，hover 前） */
+  --block-handle-active: #9CA3AF;  /* 块拖拽手柄 hover 提亮色 */
+  --block-hover-bg: #F9FAFB;        /* 块 hover 底色（极淡冷灰） */
+  --block-gutter-w: 24px;           /* 拖拽手柄区宽度（手柄左侧留白） */
 
   /* ══ Elevation ══ */
   --elev-flat: none;
   --elev-ring: 0 0 0 1px var(--border);
-  --elev-raised: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 8px rgba(0, 0, 0, 0.05);
+  --elev-raised: 0 0 0 1px var(--border), 0 1px 2px rgba(0, 0, 0, 0.04); /* 块面派：ring 优先，阴影极淡 */
+  --elev-popover: 0 0 0 1px var(--border), 0 12px 32px rgba(0, 0, 0, 0.10); /* 浮层/弹窗/Cmd+K 面板 */
 
   /* ══ Font（字体系统） ══ */
   --font-ui: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-body: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-mono: 'JetBrains Mono', 'SFMono-Regular', 'Cascadia Code', Consolas, 'Liberation Mono', monospace;
 
-  /* ══ Type Scale（8 级） ══ */
+  /* ══ Type Scale（8 级 + 编辑器/阅读专用） ══ */
   --text-xs: 12px;
   --text-sm: 13px;
   --text-base: 14px;
@@ -84,33 +97,46 @@
   --text-2xl: 22px;
   --text-3xl: 28px;
   --text-4xl: 36px;
+  --text-editor: 15px;      /* 编辑器正文（写作舒适带） */
+  --text-reading: 16px;     /* 预览正文（阅读舒适带，C 版取整数） */
 
-  /* ══ Leading & Tracking ══ */
+  /* ══ Leading & Tracking（C 版签名：字距精修，对标 Notion 设计系统） ══ */
   --leading-body: 1.6;
   --leading-title: 1.3;
   --leading-xs: 1.5;
-  --leading-code: 1.6;
+  --leading-code: 1.7;
+  --leading-editor: 1.7;
+  --leading-reading: 1.75;
   --tracking-body: 0;
-  --tracking-caps: 0.06em;
+  --tracking-caps: 0.06em;   /* ALL CAPS 标签必须 ≥0.06em */
   --tracking-title: -0.01em;
+  --tracking-h1: -0.02em;    /* 大标题负字距拉开 */
+  --tracking-h2: -0.015em;
+  --tracking-h3: -0.01em;
 
   /* ══ Weight（三级） ══ */
   --weight-regular: 400;
   --weight-medium: 510;
   --weight-semibold: 590;
+  /* C 版块标题用 700（块感更强），新增： */
+  --weight-bold: 700;
 
-  /* ══ Motion ══ */
+  /* ══ Motion（C 版 Motion=2，极静） ══ */
   --motion-fast: 150ms;
   --motion-base: 200ms;
+  --motion-slow: 300ms;
   --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-emphasized: cubic-bezier(0.2, 0, 0, 1.05);
 
-  /* ══ Layout（A1-structure） ══ */
-  --layout-appbar-h: 44px;
-  --layout-statusbar-h: 28px;
-  --layout-sidebar-w: 240px;
-  --layout-sidebar-w-xl: 260px;
-  --layout-sidebar-w-collapsed: 48px;
-  --layout-content-max: 720px;
+  /* ══ Layout（A1-structure；C 版 chrome 退化：appbar/statusbar 减薄） ══ */
+  --layout-appbar-h: 40px;            /* v1.1=48 → C 版=40，chrome 退化 */
+  --layout-statusbar-h: 26px;         /* v1.1=30 → C 版=26，chrome 退化 */
+  --layout-sidebar-w: 232px;          /* v1.1=248 → C 版=232，纯文本行更紧凑 */
+  --layout-sidebar-w-xl: 252px;       /* v1.1=268 → 252 */
+  --layout-sidebar-w-collapsed: 48px;/* v1.1=52 → 48 */
+  --layout-content-max: 880px;        /* 兼容旧引用 */
+  --layout-preview-max: 880px;       /* 预览内容列（v3.0=720→880，加宽） */
+  --layout-editor-max: 920px;        /* v1.1=780 → C 版=920，编辑区加宽提升写作空间 */
   --layout-min-pane-w: 320px;
 
   /* ══ z-index ══ */
@@ -122,17 +148,18 @@
 }
 
 /* ─────────────────────────────────────────────
-   暗色主题 — 暖灰基底（非纯黑）
+   暗色主题 — 冷中性灰分层（bg→surface→raised 递进，非暖灰）
    ───────────────────────────────────────────── */
 :root[data-theme="dark"] {
   /* ══ A1-identity ══ */
-  --bg: #1C1917;            /* 应用背景（暖深灰） */
-  --surface: #26221F;       /* 卡片/侧边栏/面板（亮度递进 1 级） */
-  --surface-sunken: #171412;/* 编辑区下沉底、代码块底 */
-  --fg: #EDEAE6;            /* 主文本（暖白） */
-  --muted: #A8A29E;         /* 次级文本 */
-  --accent: #2DD4BF;        /* 品牌强调色 Teal（暗色提亮） */
-  --border: #3A3531;        /* 默认边框 */
+  --bg: #19191C;            /* chrome 底（冷灰，非暖炭） */
+  --surface: #212125;       /* 画布（比 chrome 亮一档） */
+  --surface-sunken: #1D1D20;/* 内嵌块底（介于 bg 与 surface） */
+  --surface-raised: #2A2A2E;/* 浮起面（分段激活/卡片） */
+  --fg: #E6E6E9;            /* 主文本（off-white 冷调，防 halation） */
+  --muted: #8A8A92;         /* 次级文本（冷灰提亮） */
+  --accent: #3B82F6;        /* 焦点蓝提亮（暗色补偿） */
+  --border: #2E2E32;        /* 默认边框（冷灰） */
 
   /* ══ A2-semantic ══ */
   --success: #4ADE80;
@@ -152,37 +179,46 @@
   --space-6: 24px;
   --space-8: 32px;
   --space-10: 40px;
+  --space-12: 48px;
 
   /* ══ B-slot ══ */
-  --fg-2: #78716C;
-  --surface-warm: #2E2823;       /* 引用块底（暖棕极淡） */
-  --border-soft: #2A2623;
-  --accent-hover: #14B8A6;
-  --accent-active: #0D9488;
-  --accent-soft: rgba(45, 212, 191, 0.16); /* accent 弱背景 */
-  --on-accent: #042F2E;          /* accent 上的前景（深色文字） */
-  --focus-ring: rgba(45, 212, 191, 0.4);
+  --fg-2: #6B6B73;          /* 暗色下三级文本（冷灰） */
+  --surface-warm: #252528;       /* hover 底/引用块底（冷灰） */
+  --border-soft: #252528;
+  --accent-hover: #60A5FA;       /* 暗色悬停提亮 */
+  --accent-active: #93C5FD;
+  --accent-soft: rgba(59, 130, 246, 0.12); /* accent 弱背景 */
+  --accent-line: rgba(59, 130, 246, 0.06); /* 光标行高亮 */
+  --on-accent: #FFFFFF;          /* accent 上的前景 */
+  --focus-ring: rgba(59, 130, 246, 0.38);
 
   /* ══ C-extension（Markdown 专属） ══ */
-  --md-code-bg: #171412;
-  --md-code-fg: #EDEAE6;
-  --md-code-border: #3A3531;
-  --md-table-header-bg: #26221F;
-  --md-table-border: #44403C;
-  --md-quote-border: #57534E;
-  --md-quote-fg: #A8A29E;
-  --md-link: #7DB4F5;
+  --md-code-bg: #1D1D20;
+  --md-code-fg: #D1D5DB;         /* 冷 off-white */
+  --md-code-border: #2E2E32;
+  --md-table-header-bg: #212125;
+  --md-table-border: #3A3A3E;
+  --md-quote-border: #4B4B52;
+  --md-quote-fg: #8A8A92;
+  --md-link: #60A5FA;            /* 暗色链接提亮 */
   --md-link-hover: #93C5FD;
-  --md-link-visited: #C4B5FD;
-  --md-hr: #44403C;
-  --md-selection: rgba(45, 212, 191, 0.28);
-  --md-task-checked: #2DD4BF;
-  --md-inline-code-fg: #FBBF24;
+  --md-link-visited: #818CF8;    /* 冷 indigo（纯色，非渐变） */
+  --md-hr: #3A3A3E;
+  --md-selection: rgba(59, 130, 246, 0.25);
+  --md-task-checked: #3B82F6;
+  --md-inline-code-fg: #9CA3AF;
+
+  /* ══ C-extension · 块面派专属 ══ */
+  --block-handle: #4A4A52;         /* 暗色拖拽手柄 */
+  --block-handle-active: #6B6B73;
+  --block-hover-bg: #252528;
+  --block-gutter-w: 24px;
 
   /* ══ Elevation（暗色以亮度递进表达层级，阴影退位） ══ */
   --elev-flat: none;
   --elev-ring: 0 0 0 1px var(--border);
   --elev-raised: 0 0 0 1px var(--border), 0 8px 24px rgba(0, 0, 0, 0.35);
+  --elev-popover: 0 0 0 1px var(--border), 0 12px 32px rgba(0, 0, 0, 0.50); /* Cmd+K 面板 */
 
   /* ══ Font / Type Scale / Leading / Tracking / Weight（与明色一致，共用） ══ */
   --font-ui: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -196,29 +232,41 @@
   --text-2xl: 22px;
   --text-3xl: 28px;
   --text-4xl: 36px;
+  --text-editor: 15px;
+  --text-reading: 16px;
   --leading-body: 1.6;
   --leading-title: 1.3;
   --leading-xs: 1.5;
-  --leading-code: 1.6;
+  --leading-code: 1.7;
+  --leading-editor: 1.7;
+  --leading-reading: 1.75;
   --tracking-body: 0;
   --tracking-caps: 0.06em;
   --tracking-title: -0.01em;
+  --tracking-h1: -0.02em;
+  --tracking-h2: -0.015em;
+  --tracking-h3: -0.01em;
   --weight-regular: 400;
   --weight-medium: 510;
   --weight-semibold: 590;
+  --weight-bold: 700;
 
   /* ══ Motion ══ */
   --motion-fast: 150ms;
   --motion-base: 200ms;
+  --motion-slow: 300ms;
   --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-emphasized: cubic-bezier(0.2, 0, 0, 1.05);
 
-  /* ══ Layout / z-index（共用） ══ */
-  --layout-appbar-h: 44px;
-  --layout-statusbar-h: 28px;
-  --layout-sidebar-w: 240px;
-  --layout-sidebar-w-xl: 260px;
+  /* ══ Layout / z-index（与明色一致） ══ */
+  --layout-appbar-h: 40px;
+  --layout-statusbar-h: 26px;
+  --layout-sidebar-w: 232px;
+  --layout-sidebar-w-xl: 252px;
   --layout-sidebar-w-collapsed: 48px;
-  --layout-content-max: 720px;
+  --layout-content-max: 880px;
+  --layout-preview-max: 880px;
+  --layout-editor-max: 920px;
   --layout-min-pane-w: 320px;
   --z-base: 0;
   --z-dropdown: 1000;
@@ -244,9 +292,10 @@ body {
   font-size: var(--text-base);
   line-height: var(--leading-body);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* 焦点可见（键盘可达） */
+/* 焦点可见（键盘可达；C 版焦点环用焦点蓝） */
 :focus-visible {
   outline: none;
   box-shadow: 0 0 0 3px var(--focus-ring);

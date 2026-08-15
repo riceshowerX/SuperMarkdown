@@ -4,12 +4,13 @@
 .markdown-body {
   color: var(--fg);
   font-family: var(--font-body);
-  font-size: var(--text-lg);
-  line-height: var(--leading-body);
-  max-width: var(--layout-content-max);
+  font-size: var(--text-reading);
+  line-height: var(--leading-reading);
+  max-width: var(--layout-preview-max);
   margin: 0 auto;
-  padding: var(--space-8) var(--space-6);
+  padding: var(--space-8) clamp(var(--space-4), 4vw, 48px);
   word-wrap: break-word;
+  font-feature-settings: "tnum";
 }
 
 .markdown-body > :first-child { margin-top: 0; }
@@ -23,18 +24,17 @@
 .markdown-body h6 {
   color: var(--fg);
   font-weight: var(--weight-semibold);
-  letter-spacing: var(--tracking-title);
   line-height: var(--leading-title);
   margin: var(--space-6) 0 var(--space-3);
 }
-.markdown-body h1 { font-size: var(--text-3xl); }
-.markdown-body h2 { font-size: var(--text-2xl); }
-.markdown-body h3 { font-size: var(--text-xl); }
-.markdown-body h4 { font-size: var(--text-lg); }
+.markdown-body h1 { font-size: var(--text-3xl); letter-spacing: var(--tracking-h1); font-weight: var(--weight-bold); }
+.markdown-body h2 { font-size: var(--text-2xl); letter-spacing: var(--tracking-h2); }
+.markdown-body h3 { font-size: var(--text-xl); letter-spacing: var(--tracking-h3); font-weight: var(--weight-medium); }
+.markdown-body h4 { font-size: var(--text-lg); letter-spacing: var(--tracking-title); }
 .markdown-body h5,
-.markdown-body h6 { font-size: var(--text-base); }
+.markdown-body h6 { font-size: var(--text-base); letter-spacing: var(--tracking-title); }
 
-.markdown-body p { margin: var(--space-2) 0 var(--space-3); }
+.markdown-body p { margin: var(--space-3) 0; }
 
 .markdown-body a {
   color: var(--md-link);

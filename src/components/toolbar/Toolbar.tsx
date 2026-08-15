@@ -8,6 +8,7 @@ import {
   FileText,
   Menu,
   PencilLine,
+  Search,
   type LucideIcon,
 } from 'lucide-react';
 import { useDocumentsStore } from '../../stores/documents.store';
@@ -27,6 +28,7 @@ export default function Toolbar() {
   const editorContent = useEditorStore((s) => s.content);
   const saveStatus = useEditorStore((s) => s.saveStatus);
   const setMobileSidebarOpen = useUiStore((s) => s.setMobileSidebarOpen);
+  const setCommandPaletteOpen = useUiStore((s) => s.setCommandPaletteOpen);
 
   const [renaming, setRenaming] = useState(false);
   const [draft, setDraft] = useState('');
@@ -54,33 +56,35 @@ export default function Toolbar() {
   };
 
   return (
-    <header className="flex h-11 shrink-0 items-center gap-2 border-b border-border bg-bg px-3">
+    <header className="flex h-[var(--layout-appbar-h)] shrink-0 items-center gap-2 border-b border-border bg-bg px-3">
       {isMobile && (
         <IconButton icon={Menu} label="打开文档列表" iconSize={20} onClick={() => setMobileSidebarOpen(true)} />
       )}
 
-      <div className="flex shrink-0 items-center gap-2" aria-hidden>
-        <FileText size={18} strokeWidth={1.8} className="text-accent" />
-        <span className="hidden wt-semibold tx-sm text-fg sm:inline">SuperMarkdown</span>
-      </div>
+      {/* 品牌（C 版弱化：小图标无强调色；PAGES §2） */}
+      <FileText size={16} strokeWidth={1.8} className="shrink-0 text-fg-2" aria-hidden />
 
-      {/* 文档标题（点击重命名） */}
+      {/* 面包屑：工作区 / 文档名（点击重命名；PAGES §2 chrome 退化） */}
       {renaming && activeDoc ? (
-        <input
-          autoFocus
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
-          onBlur={commitRename}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') commitRename();
-            if (e.key === 'Escape') {
-              setDraft(activeDoc.title);
-              setRenaming(false);
-            }
-          }}
-          aria-label="重命名文档"
-          className="min-w-0 flex-1 rounded border border-accent bg-surface px-2 tx-sm text-fg outline-none"
-        />
+        <div className="flex min-w-0 shrink-0 items-center gap-1.5 self-stretch py-1">
+          <span className="tx-sm text-fg-2">工作区</span>
+          <span className="text-border" aria-hidden>/</span>
+          <input
+            autoFocus
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            onBlur={commitRename}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') commitRename();
+              if (e.key === 'Escape') {
+                setDraft(activeDoc.title);
+                setRenaming(false);
+              }
+            }}
+            aria-label="重命名文档"
+            className="min-w-0 max-w-[40vw] rounded border border-accent bg-surface px-1.5 tx-sm text-fg outline-none"
+          />
+        </div>
       ) : (
         <button
           type="button"
@@ -90,13 +94,34 @@ export default function Toolbar() {
             setRenaming(true);
           }}
           title="点击重命名"
-          className="flex min-h-11 min-w-0 flex-1 items-center truncate self-stretch rounded px-2 text-left tx-sm wt-medium text-fg hover:bg-surface-warm md:min-h-9 md:py-1"
+          className="flex min-h-11 min-w-0 shrink-0 items-center gap-1.5 self-stretch rounded px-1.5 text-left hover:bg-surface-warm md:min-h-9"
         >
-          {activeDoc ? activeDoc.title : '无标题文档'}
+          <span className="tx-sm text-fg-2">工作区</span>
+          <span className="text-border" aria-hidden>/</span>
+          <span className="truncate tx-sm wt-medium text-fg">
+            {activeDoc ? activeDoc.title : '无标题文档'}
+          </span>
         </button>
       )}
 
       <div className="flex-1" />
+
+      {/* 命令面板入口（Cmd+K；移动端只留图标，文案隐藏） */}
+      <button
+        type="button"
+        onClick={() => setCommandPaletteOpen(true)}
+        aria-label="打开命令面板"
+        title="命令面板 ⌘K"
+        className="inline-flex h-9 items-center gap-1.5 rounded-md border border-border bg-surface-sunken px-2.5 text-fg-2 transition-colors duration-150 hover:bg-block-hover active:bg-accent-soft md:w-56 md:justify-between"
+      >
+        <span className="inline-flex min-w-0 items-center gap-1.5">
+          <Search size={16} strokeWidth={1.8} aria-hidden />
+          <span className="hidden truncate tx-sm md:inline">搜索或输入命令…</span>
+        </span>
+        <kbd className="hidden rounded border border-border bg-surface-sunken px-1.5 py-0.5 font-mono text-[10px] text-fg-2 md:inline">
+          ⌘K
+        </kbd>
+      </button>
 
       {/* 导出菜单 */}
       {!isMobile && (
@@ -122,8 +147,8 @@ export default function Toolbar() {
         </div>
       )}
 
-      {/* 视图模式（桌面循环：分屏/编辑/预览） */}
-      {!isMobile && <ViewModeCycle />}
+      {/* 视图模式（桌面 Segmented 3 态：分屏/编辑/预览） */}
+      {!isMobile && <ViewModeSegmented />}
 
       <ThemeToggle />
 
@@ -151,11 +176,34 @@ function ExportItem({ icon: Icon, label, onClick }: { icon: LucideIcon; label: s
   );
 }
 
-function ViewModeCycle() {
+function ViewModeSegmented() {
   const viewMode = useUiStore((s) => s.viewMode);
   const setViewMode = useUiStore((s) => s.setViewMode);
-  const next = viewMode === 'split' ? 'edit' : viewMode === 'edit' ? 'preview' : 'split';
-  const icon = viewMode === 'split' ? Columns2 : viewMode === 'edit' ? PencilLine : Eye;
-  const label = `视图模式：${viewMode === 'split' ? '分屏' : viewMode === 'edit' ? '仅编辑' : '仅预览'}`;
-  return <IconButton icon={icon} label={`${label}（点击切换）`} iconSize={20} onClick={() => setViewMode(next)} />;
+  const modes = [
+    { mode: 'split' as const, icon: Columns2, label: '分屏' },
+    { mode: 'edit' as const, icon: PencilLine, label: '编辑' },
+    { mode: 'preview' as const, icon: Eye, label: '预览' },
+  ];
+  return (
+    <div role="group" aria-label="视图模式" className="flex items-center rounded-md bg-surface-sunken p-0.5">
+      {modes.map(({ mode, icon: Icon, label }) => {
+        const active = viewMode === mode;
+        return (
+          <button
+            key={mode}
+            type="button"
+            aria-pressed={active}
+            aria-label={`视图：${label}`}
+            title={`视图：${label}`}
+            onClick={() => setViewMode(mode)}
+            className={`inline-flex h-8 w-8 items-center justify-center rounded transition-colors duration-150 ${
+              active ? 'bg-surface-raised text-accent shadow-[var(--elev-ring)]' : 'text-fg-2 hover:text-fg'
+            }`}
+          >
+            <Icon size={16} strokeWidth={1.8} aria-hidden />
+          </button>
+        );
+      })}
+    </div>
+  );
 }

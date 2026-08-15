@@ -4,16 +4,18 @@ import { useUiStore } from '../../stores/ui.store';
 import EditorPane from '../editor/EditorPane';
 import PreviewPane from '../preview/PreviewPane';
 
-/** 移动端单栏（<768px）：编辑/预览 Tab 切换 + 底部格式条（PAGES §7） */
+/** 移动端单栏（<768px）：Segmented 分段切换编辑/预览 + 底部格式条（UIUX-V2 §4.4） */
 export default function MobileShell() {
   const mobileMode = useUiStore((s) => s.mobileMode);
   const setMobileMode = useUiStore((s) => s.setMobileMode);
 
   return (
     <div className="flex min-w-0 flex-1 flex-col">
-      <div role="tablist" aria-label="编辑/预览切换" className="flex h-11 shrink-0 border-b border-border bg-bg">
-        <TabButton active={mobileMode === 'edit'} label="编辑" onClick={() => setMobileMode('edit')} icon={<PencilLine size={16} aria-hidden />} />
-        <TabButton active={mobileMode === 'preview'} label="预览" onClick={() => setMobileMode('preview')} icon={<Eye size={16} aria-hidden />} />
+      <div className="shrink-0 border-b border-border bg-bg px-3 py-2">
+        <div role="tablist" aria-label="编辑/预览切换" className="flex rounded-md bg-surface-sunken p-0.5">
+          <SegButton active={mobileMode === 'edit'} label="编辑" onClick={() => setMobileMode('edit')} icon={<PencilLine size={16} aria-hidden />} />
+          <SegButton active={mobileMode === 'preview'} label="预览" onClick={() => setMobileMode('preview')} icon={<Eye size={16} aria-hidden />} />
+        </div>
       </div>
       <div className="flex min-h-0 flex-1 flex-col">
         {mobileMode === 'edit' ? <EditorPane /> : <PreviewPane />}
@@ -22,7 +24,7 @@ export default function MobileShell() {
   );
 }
 
-function TabButton({
+function SegButton({
   active,
   label,
   onClick,
@@ -39,13 +41,12 @@ function TabButton({
       role="tab"
       aria-selected={active}
       onClick={onClick}
-      className={`relative flex min-w-0 flex-1 items-center justify-center gap-1.5 tx-sm wt-medium transition-colors duration-150 ${
-        active ? 'text-accent' : 'text-fg-2'
+      className={`flex h-11 min-w-0 flex-1 items-center justify-center gap-1.5 rounded transition-colors duration-150 ${
+        active ? 'bg-accent text-on-accent wt-medium' : 'text-fg-2 hover:text-fg'
       }`}
     >
       {icon}
       {label}
-      {active && <span className="absolute inset-x-4 bottom-0 h-0.5 rounded-full bg-accent" aria-hidden />}
     </button>
   );
 }

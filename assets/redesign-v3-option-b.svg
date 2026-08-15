@@ -1,0 +1,177 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 640" font-family="'Inter','Noto Sans SC',sans-serif">
+  <!-- ════════ OPTION B · 清单派 (Things 3) ════════ -->
+  <!-- 柔和米白底，文档卡片化，accent 极克制（仅选中/勾选），人文无衬线 -->
+
+  <!-- 主背景：柔和米白 -->
+  <rect width="1200" height="640" fill="#F5F4F0"/>
+
+  <!-- ── 侧边栏（卡片化文档列表） ── -->
+  <rect x="0" y="0" width="264" height="640" fill="#F0EFEB"/>
+
+  <!-- 搜索框 -->
+  <g transform="translate(16,16)">
+    <rect width="232" height="32" rx="8" fill="#FFFFFF" stroke="#E5E3DE"/>
+    <g transform="translate(10,11)" stroke="#9A958E" stroke-width="1.3" fill="none" stroke-linecap="round">
+      <circle cx="4" cy="4" r="3.5"/><line x1="6.5" y1="6.5" x2="9" y2="9"/>
+    </g>
+    <text x="30" y="21" font-size="13" fill="#9A958E">搜索文档…</text>
+  </g>
+
+  <!-- 新建文档按钮（Things-blue，accent 唯一一处大面积使用） -->
+  <g transform="translate(16,58)">
+    <rect width="232" height="36" rx="8" fill="#3B7BE5"/>
+    <g transform="translate(14,12)" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round">
+      <line x1="6" y1="2" x2="6" y2="10"/><line x1="2" y1="6" x2="10" y2="6"/>
+    </g>
+    <text x="116" y="23" font-size="13" font-weight="500" fill="#FFFFFF" text-anchor="middle">新建文档</text>
+  </g>
+
+  <!-- 文档卡片 ×5（圆润圆角 + 极淡阴影） -->
+  <defs>
+    <filter id="cardSh" x="-5%" y="-10%" width="110%" height="130%">
+      <feDropShadow dx="0" dy="1" stdDeviation="1.5" flood-color="#000000" flood-opacity="0.05"/>
+    </filter>
+  </defs>
+
+  <!-- 卡片1（选中态：左侧 accent 条 + 标题加重） -->
+  <g transform="translate(16,108)" filter="url(#cardSh)">
+    <rect width="232" height="54" rx="10" fill="#FFFFFF"/>
+    <rect width="3" height="54" rx="1.5" fill="#3B7BE5"/>
+    <text x="16" y="22" font-size="13" font-weight="600" fill="#2A2A28">写作的本质</text>
+    <text x="16" y="40" font-size="11" fill="#9A958E">今天 · 218 字 · 已保存</text>
+  </g>
+  <!-- 卡片2 -->
+  <g transform="translate(16,170)" filter="url(#cardSh)">
+    <rect width="232" height="54" rx="10" fill="#FFFFFF"/>
+    <text x="16" y="22" font-size="13" font-weight="500" fill="#3A3A38">本周写作计划</text>
+    <text x="16" y="40" font-size="11" fill="#9A958E">今天 · 草稿</text>
+  </g>
+  <!-- 卡片3 -->
+  <g transform="translate(16,232)" filter="url(#cardSh)">
+    <rect width="232" height="54" rx="10" fill="#FFFFFF"/>
+    <text x="16" y="22" font-size="13" font-weight="500" fill="#3A3A38">设计备忘录</text>
+    <text x="16" y="40" font-size="11" fill="#9A958E">昨天 · 1.2k 字</text>
+  </g>
+  <!-- 卡片4 -->
+  <g transform="translate(16,294)" filter="url(#cardSh)">
+    <rect width="232" height="54" rx="10" fill="#FFFFFF"/>
+    <text x="16" y="22" font-size="13" font-weight="500" fill="#3A3A38">极简主义读书笔记</text>
+    <text x="16" y="40" font-size="11" fill="#9A958E">3 天前</text>
+  </g>
+  <!-- 卡片5 -->
+  <g transform="translate(16,356)" filter="url(#cardSh)">
+    <rect width="232" height="54" rx="10" fill="#FFFFFF"/>
+    <text x="16" y="22" font-size="13" font-weight="500" fill="#3A3A38">命令面板交互设计</text>
+    <text x="16" y="40" font-size="11" fill="#9A958E">上周</text>
+  </g>
+
+  <!-- 侧边栏底栏 -->
+  <line x1="16" y1="604" x2="248" y2="604" stroke="#E5E3DE"/>
+  <text x="16" y="624" font-size="11" fill="#9A958E">5 篇文档</text>
+
+  <!-- ── 顶部工具栏 ── -->
+  <rect x="264" y="0" width="936" height="48" fill="#F5F4F0"/>
+  <line x1="264" y1="48" x2="1200" y2="48" stroke="#E5E3DE"/>
+  <!-- Logo -->
+  <circle cx="284" cy="24" r="5" fill="#3B7BE5"/>
+  <text x="296" y="29" font-size="13" font-weight="600" fill="#2A2A28">SuperMarkdown</text>
+  <!-- 文档标题（可点击重命名） -->
+  <text x="692" y="29" font-size="14" font-weight="500" fill="#2A2A28" text-anchor="middle">本周写作计划</text>
+  <!-- ⌘K -->
+  <g transform="translate(940,14)">
+    <rect width="116" height="28" rx="6" fill="#FFFFFF" stroke="#E5E3DE"/>
+    <g transform="translate(10,9)" stroke="#9A958E" stroke-width="1.3" fill="none" stroke-linecap="round">
+      <circle cx="4" cy="4" r="3.5"/><line x1="6.5" y1="6.5" x2="9" y2="9"/>
+    </g>
+    <text x="28" y="18.5" font-size="12" fill="#9A958E">搜索</text>
+    <text x="100" y="18" font-family="'JetBrains Mono',monospace" font-size="10" fill="#9A958E" text-anchor="end">⌘K</text>
+  </g>
+  <!-- 视图模式分段 -->
+  <g transform="translate(1070,16)">
+    <rect width="64" height="24" rx="6" fill="#FFFFFF" stroke="#E5E3DE"/>
+    <!-- 分屏（选中） -->
+    <rect x="2" y="2" width="20" height="20" rx="4" fill="#EEF4FF"/>
+    <g transform="translate(7,8)" stroke="#3B7BE5" stroke-width="1.3" fill="none">
+      <rect x="0" y="0" width="11" height="8" rx="1.5"/><line x1="5.5" y1="0" x2="5.5" y2="8"/>
+    </g>
+    <!-- 编辑 -->
+    <g transform="translate(26,8)" stroke="#9A958E" stroke-width="1.3" fill="none" stroke-linecap="round">
+      <path d="M0 8 L4 4 L7 7 L3 11" /><line x1="5" y1="3" x2="7" y2="1"/>
+    </g>
+    <!-- 预览 -->
+    <g transform="translate(46,8)" stroke="#9A958E" stroke-width="1.3" fill="none">
+      <ellipse cx="5" cy="5" rx="5" ry="3.2"/><circle cx="5" cy="5" r="1.3" fill="#9A958E"/>
+    </g>
+  </g>
+  <!-- 主题切换 -->
+  <g transform="translate(1156,22)" stroke="#9A958E" stroke-width="1.3" fill="none" stroke-linecap="round">
+    <path d="M9 2 A5 5 0 1 0 9 12 A4 4 0 0 1 9 2 Z" fill="#9A958E" stroke="none"/>
+  </g>
+
+  <!-- ── 编辑区（纸面） ── -->
+  <rect x="264" y="48" width="936" height="564" fill="#FFFFFF"/>
+
+  <!-- 内容列（居中 max-width 560） -->
+  <text x="320" y="100" font-size="26" font-weight="600" fill="#2A2A28" letter-spacing="-0.3">本周写作计划</text>
+  <text x="320" y="124" font-size="12" fill="#9A958E">8 项任务 · 3 已完成</text>
+
+  <!-- H2 今日 + 小日历图标 -->
+  <g transform="translate(320,150)">
+    <rect width="14" height="14" rx="3" fill="none" stroke="#9A958E" stroke-width="1.2"/>
+    <line x1="0" y1="4" x2="14" y2="4" stroke="#9A958E" stroke-width="1.2"/>
+    <text x="22" y="12" font-size="14" font-weight="600" fill="#4A4A48">今日</text>
+  </g>
+
+  <!-- 任务列表（勾选态 accent 蓝勾，未勾选空方框） -->
+  <!-- [x] -->
+  <g transform="translate(324,184)">
+    <rect width="16" height="16" rx="4" fill="#3B7BE5"/>
+    <path d="M4 8.5 L7 11.5 L12 5" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="350" y="197" font-size="14" fill="#9A958E" text-decoration="line-through">完成 SuperMarkdown 极简版配色</text>
+
+  <g transform="translate(324,214)">
+    <rect width="16" height="16" rx="4" fill="#3B7BE5"/>
+    <path d="M4 8.5 L7 11.5 L12 5" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="350" y="227" font-size="14" fill="#9A958E" text-decoration="line-through">确定 Things 3 风格的卡片圆角</text>
+
+  <!-- [ ] 未完成 -->
+  <g transform="translate(324,244)">
+    <rect width="16" height="16" rx="4" fill="#FFFFFF" stroke="#C8C4BE" stroke-width="1.4"/>
+  </g>
+  <text x="350" y="257" font-size="14" fill="#2A2A28">撰写设计规范文档（DESIGN.md 9 节）</text>
+
+  <g transform="translate(324,274)">
+    <rect width="16" height="16" rx="4" fill="#FFFFFF" stroke="#C8C4BE" stroke-width="1.4"/>
+  </g>
+  <text x="350" y="287" font-size="14" fill="#2A2A28">与团队同步 A / B / C 三版方案</text>
+
+  <!-- H2 本周 -->
+  <g transform="translate(320,316)">
+    <rect width="14" height="14" rx="3" fill="none" stroke="#9A958E" stroke-width="1.2"/>
+    <line x1="0" y1="4" x2="14" y2="4" stroke="#9A958E" stroke-width="1.2"/>
+    <text x="22" y="12" font-size="14" font-weight="600" fill="#4A4A48">本周</text>
+  </g>
+
+  <g transform="translate(324,346)">
+    <rect width="16" height="16" rx="4" fill="#FFFFFF" stroke="#C8C4BE" stroke-width="1.4"/>
+  </g>
+  <text x="350" y="359" font-size="14" fill="#2A2A28">整理用户反馈，提炼共性诉求</text>
+
+  <g transform="translate(324,376)">
+    <rect width="16" height="16" rx="4" fill="#FFFFFF" stroke="#C8C4BE" stroke-width="1.4"/>
+  </g>
+  <text x="350" y="389" font-size="14" fill="#2A2A28">评审三版视觉差异，选定深化方向</text>
+
+  <!-- 引用块 -->
+  <line x1="320" y1="420" x2="320" y2="448" stroke="#3B7BE5" stroke-width="2" opacity="0.4"/>
+  <text x="336" y="438" font-size="14" font-style="italic" fill="#7A7770">真正的极简不是删减元素，</text>
+  <text x="336" y="458" font-size="14" font-style="italic" fill="#7A7770">而是让每个留下的元素都有意义。</text>
+
+  <!-- ── 底部状态栏 ── -->
+  <line x1="264" y1="612" x2="1200" y2="612" stroke="#E5E3DE"/>
+  <text x="284" y="630" font-family="'JetBrains Mono',monospace" font-size="12" fill="#9A958E">1,240 字 · 8 行 · 阅读约 4 分钟</text>
+  <circle cx="1096" cy="626" r="3" fill="#5B9F6B"/>
+  <text x="1106" y="630" font-size="12" fill="#9A958E">已保存 · 14:32</text>
+</svg>

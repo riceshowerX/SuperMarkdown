@@ -5,6 +5,7 @@
   --color-bg: var(--bg);
   --color-surface: var(--surface);
   --color-surface-sunken: var(--surface-sunken);
+  --color-surface-raised: var(--surface-raised);
   --color-fg: var(--fg);
   --color-fg-2: var(--fg-2);
   --color-muted: var(--muted);
@@ -20,6 +21,16 @@
   --color-danger: var(--danger);
   --color-info: var(--info);
   --color-surface-warm: var(--surface-warm);
+  /* C 版块面派专属 */
+  --color-block-handle: var(--block-handle);
+  --color-block-handle-active: var(--block-handle-active);
+  --color-block-hover: var(--block-hover-bg);
+  /* z-index 层级体系（z-modal/z-sticky/z-dropdown/z-toast 等类依赖此映射，缺失会导致所有弹层 z-index 退为 auto） */
+  --z-index-base: var(--z-base);
+  --z-index-dropdown: var(--z-dropdown);
+  --z-index-sticky: var(--z-sticky);
+  --z-index-modal: var(--z-modal);
+  --z-index-toast: var(--z-toast);
 }
 
 /* ══ 全局字体/字号/行高/字距工具（避开 Tailwind 默认命名冲突） ══ */
@@ -31,6 +42,8 @@
 .tx-sm { font-size: var(--text-sm); }
 .tx-base { font-size: var(--text-base); }
 .tx-lg { font-size: var(--text-lg); }
+.tx-editor { font-size: var(--text-editor); }
+.tx-reading { font-size: var(--text-reading); }
 .tx-xl { font-size: var(--text-xl); }
 .tx-2xl { font-size: var(--text-2xl); }
 .tx-3xl { font-size: var(--text-3xl); }
@@ -38,12 +51,18 @@
 .wt-regular { font-weight: var(--weight-regular); }
 .wt-medium { font-weight: var(--weight-medium); }
 .wt-semibold { font-weight: var(--weight-semibold); }
+.wt-bold { font-weight: var(--weight-bold); }
 
 .lh-body { line-height: var(--leading-body); }
 .lh-title { line-height: var(--leading-title); }
 .lh-xs { line-height: var(--leading-xs); }
+.lh-editor { line-height: var(--leading-editor); }
+.lh-reading { line-height: var(--leading-reading); }
 .trk-title { letter-spacing: var(--tracking-title); }
 .trk-caps { letter-spacing: var(--tracking-caps); }
+.trk-h1 { letter-spacing: var(--tracking-h1); }
+.trk-h2 { letter-spacing: var(--tracking-h2); }
+.trk-h3 { letter-spacing: var(--tracking-h3); }
 
 /* ══ 主题过渡（150ms，prefers-reduced-motion 由 tokens.css 兜底） ══ */
 .theme-transition,
@@ -59,18 +78,31 @@
   background: rgba(0, 0, 0, 0.4);
 }
 
-/* ══ 滚动条弱化（chrome 退到最弱） ══ */
+/* ══ C 版 Cmd+K 极淡遮罩（PAGES §6：明色极淡编辑区仍可见，暗色稍深保证面板对比） ══ */
+.scrim-palette {
+  background: rgba(0, 0, 0, 0.03);
+}
+:root[data-theme="dark"] .scrim-palette {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/* ══ 滚动条弱化（chrome 退到最弱；hover 时 thumb 提亮） ══ */
 .sm-scroll {
   scrollbar-width: thin;
   scrollbar-color: var(--border) transparent;
 }
+.sm-scroll:hover {
+  scrollbar-color: var(--fg-2) transparent;
+}
 .sm-scroll::-webkit-scrollbar { width: 8px; height: 8px; }
 .sm-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 .sm-scroll::-webkit-scrollbar-track { background: transparent; }
+.sm-scroll:hover::-webkit-scrollbar-thumb { background: var(--fg-2); }
 
-/* ══ 编辑器光标行弱高亮（Focus Mode 简化版） ══ */
+/* ══ 编辑器光标行弱高亮（Focus/打字机模式；行切换 100ms 过渡） ══ */
 .editor-active-line {
-  background: var(--accent-soft);
+  background: var(--accent-line);
+  transition: background-color 100ms var(--ease-standard);
 }
 
 /* ══ 骨架微光（loading 态） ══ */
@@ -83,4 +115,40 @@
   background: var(--surface-sunken);
   border-radius: var(--radius-sm);
   animation: sm-shimmer 1.6s ease-in-out infinite;
+}
+
+/* ══ Toast 入场（200ms slide+fade，UIUX-V2 §6） ══ */
+@keyframes sm-toast-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.toast-enter {
+  animation: sm-toast-in var(--motion-base) var(--ease-standard);
+}
+
+/* ══ 保存中图标微脉冲（UIUX-V2 §5.5，0.4→1 循环） ══ */
+@keyframes sm-save-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+.save-pulse {
+  animation: sm-save-pulse 1.2s ease-in-out infinite;
+}
+
+/* ══ 命令面板打开（120ms fade+scale，UIUX-V2 §5.2） ══ */
+@keyframes sm-palette-in {
+  from { opacity: 0; transform: scale(0.98); }
+  to { opacity: 1; transform: scale(1); }
+}
+.palette-enter {
+  animation: sm-palette-in 120ms var(--ease-standard);
+}
+
+/* ══ 面板/抽屉/弹窗打开（300ms，UIUX-V2 §5.6） ══ */
+@keyframes sm-overlay-in {
+  from { opacity: 0; transform: scale(0.98); }
+  to { opacity: 1; transform: scale(1); }
+}
+.overlay-enter {
+  animation: sm-overlay-in var(--motion-slow) var(--ease-emphasized);
 }

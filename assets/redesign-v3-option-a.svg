@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 640" font-family="'Spectral','Noto Serif SC',Georgia,serif">
+  <!-- ════════ OPTION A · 白纸派 (iA Writer) ════════ -->
+  <!-- 暖纸白底，单一居中书写列，chrome 隐形，衬线正文 + 无衬线 UI -->
+
+  <!-- 画布背景：暖纸白 -->
+  <rect width="1200" height="640" fill="#FAFAF7"/>
+
+  <!-- 左缘 hover 揭示条（侧边栏已收起为全屏写作） -->
+  <rect x="0" y="0" width="3" height="640" fill="#E4E2DE"/>
+  <g opacity="0.45">
+    <path d="M14 314 L14 326 L10 320 Z" fill="#9A988F"/>
+    <text x="9" y="346" font-family="'Inter',sans-serif" font-size="9" fill="#9A988F" text-anchor="middle" letter-spacing="0.06em">LIBRARY</text>
+  </g>
+
+  <!-- ── 顶部 chrome（极薄，与纸同色，仅图标） ── -->
+  <!-- 侧边栏开关（panel-left 图标） -->
+  <g transform="translate(22,22)" stroke="#9A988F" stroke-width="1.4" fill="none" stroke-linecap="round">
+    <rect x="0" y="0" width="16" height="14" rx="2"/>
+    <line x1="5" y1="0" x2="5" y2="14"/>
+  </g>
+  <!-- 文件名（极淡） -->
+  <text x="50" y="32" font-family="'Inter','Noto Sans SC',sans-serif" font-size="12" fill="#9A988F">写作的本质.md</text>
+
+  <!-- ⌘K 触发（极淡胶囊） -->
+  <g transform="translate(1014,14)">
+    <rect width="120" height="28" rx="6" fill="#F4F3EF" stroke="#ECEAE4"/>
+    <circle cx="14" cy="14" r="4.5" fill="none" stroke="#9A988F" stroke-width="1.3"/>
+    <line x1="17.5" y1="17.5" x2="20.5" y2="20.5" stroke="#9A988F" stroke-width="1.3" stroke-linecap="round"/>
+    <text x="30" y="18.5" font-family="'Inter','Noto Sans SC',sans-serif" font-size="12" fill="#9A988F">搜索</text>
+    <rect x="86" y="7" width="26" height="14" rx="3" fill="#ECEAE4"/>
+    <text x="99" y="17" font-family="'JetBrains Mono',monospace" font-size="10" fill="#9A988F" text-anchor="middle">⌘K</text>
+  </g>
+  <!-- 主题切换（太阳/月） -->
+  <g transform="translate(1156,22)" stroke="#9A988F" stroke-width="1.3" fill="none" stroke-linecap="round">
+    <circle cx="7" cy="7" r="4.5"/>
+    <line x1="7" y1="0.5" x2="7" y2="2.5"/><line x1="7" y1="11.5" x2="7" y2="13.5"/>
+    <line x1="0.5" y1="7" x2="2.5" y2="7"/><line x1="11.5" y1="7" x2="13.5" y2="7"/>
+  </g>
+
+  <!-- ── 浮动格式条（半透明，hover 浮现示意） ── -->
+  <g opacity="0.62">
+    <rect x="420" y="56" width="360" height="36" rx="18" fill="#FFFFFF" stroke="#ECEAE4" filter="url(#aShadow)"/>
+    <text x="448" y="79" font-family="'Inter',sans-serif" font-size="14" font-weight="700" fill="#6B6B68" text-anchor="middle">B</text>
+    <text x="484" y="79" font-family="'Spectral',serif" font-size="15" font-style="italic" fill="#6B6B68" text-anchor="middle">I</text>
+    <text x="520" y="79" font-family="'Inter',sans-serif" font-size="13" font-weight="600" fill="#6B6B68" text-anchor="middle">H</text>
+    <!-- 列表图标 -->
+    <g transform="translate(548,69)" stroke="#6B6B68" stroke-width="1.3" stroke-linecap="round">
+      <circle cx="2" cy="2" r="1.3" fill="#6B6B68" stroke="none"/><line x1="7" y1="2" x2="20" y2="2"/>
+      <circle cx="2" cy="9" r="1.3" fill="#6B6B68" stroke="none"/><line x1="7" y1="9" x2="20" y2="9"/>
+    </g>
+    <!-- 引用图标 -->
+    <g transform="translate(584,71)" fill="#6B6B68">
+      <rect x="0" y="0" width="2.5" height="11" rx="1"/>
+      <rect x="5" y="2" width="14" height="1.6" rx="0.8"/>
+      <rect x="5" y="6" width="11" height="1.6" rx="0.8"/>
+    </g>
+    <!-- 代码图标 -->
+    <text x="640" y="79" font-family="'JetBrains Mono',monospace" font-size="13" fill="#6B6B68" text-anchor="middle">&lt;/&gt;</text>
+    <!-- 链接图标 -->
+    <g transform="translate(672,71)" stroke="#6B6B68" stroke-width="1.3" fill="none" stroke-linecap="round">
+      <path d="M4 6 Q4 2 8 2 L11 2 Q15 2 15 6"/>
+      <path d="M11 12 Q15 12 15 8" />
+      <line x1="6" y1="10" x2="13" y2="4"/>
+    </g>
+    <!-- 图片图标 -->
+    <g transform="translate(710,70)" stroke="#6B6B68" stroke-width="1.3" fill="none" stroke-linecap="round">
+      <rect x="0" y="0" width="14" height="11" rx="2"/>
+      <circle cx="4" cy="4" r="1.2" fill="#6B6B68" stroke="none"/>
+      <path d="M1 10 L5 6 L8 9 L11 5 L13 7"/>
+    </g>
+  </g>
+
+  <!-- ── 内容列（居中，max-width 660，衬线正文） ── -->
+  <!-- H1 -->
+  <text x="270" y="128" font-size="30" font-weight="600" fill="#2B2B2B" letter-spacing="-0.6">写作的本质</text>
+
+  <!-- 正文段落（focus mode 示意：非当前段轻微降低存在感） -->
+  <text x="270" y="176" font-size="16" fill="#3A3A38" opacity="0.5">好的写作工具应当隐形。当你落笔时，</text>
+  <text x="270" y="202" font-size="16" fill="#3A3A38" opacity="0.5">界面退场，只剩文字与呼吸的节奏。</text>
+
+  <!-- 引用块 -->
+  <line x1="270" y1="232" x2="270" y2="262" stroke="#3B6EA5" stroke-width="2" opacity="0.4"/>
+  <text x="286" y="252" font-size="15" font-style="italic" fill="#6B6B68" opacity="0.5">文字是思想的载体，工具不应喧宾夺主。</text>
+
+  <!-- H2 -->
+  <text x="270" y="302" font-size="20" font-weight="600" fill="#2B2B2B">三个原则</text>
+
+  <!-- 有序列表（当前段：全不透明，caret 闪烁） -->
+  <text x="270" y="338" font-size="16" fill="#3A3A38"><tspan font-weight="600">1. 留白即呼吸</tspan> — 段落间留有空气，</text>
+  <text x="300" y="362" font-size="16" fill="#3A3A38">眼睛才得以休息。</text>
+  <text x="270" y="390" font-size="16" fill="#3A3A38" opacity="0.5"><tspan font-weight="600">2. 克制即尊重</tspan> — 强调色只在必要时出现。</text>
+  <text x="270" y="418" font-size="16" fill="#3A3A38" opacity="0.5"><tspan font-weight="600">3. 专注即自由</tspan> — 隐藏一切 chrome。</text>
+
+  <!-- 代码块 -->
+  <rect x="270" y="440" width="620" height="40" rx="6" fill="#F0EFEA"/>
+  <text x="286" y="465" font-family="'JetBrains Mono',monospace" font-size="13" fill="#2B2B2B">const focus = () =&gt; chrome.forEach(hide)</text>
+
+  <!-- 当前段落（focus 高亮 + 蓝色 caret，全不透明） -->
+  <text x="270" y="512" font-size="16" fill="#2B2B2B">此刻你读到的每一个字，都比包裹</text>
+  <text x="270" y="536" font-size="16" fill="#2B2B2B">它的界面更重要。</text>
+  <!-- 蓝色光标（写作区唯一的强调色） -->
+  <rect x="466" y="522" width="2" height="18" fill="#3B6EA5">
+    <animate attributeName="opacity" values="1;0;1" dur="1.1s" repeatCount="indefinite"/>
+  </rect>
+
+  <!-- ── 底部状态栏（极薄） ── -->
+  <line x1="24" y1="612" x2="1176" y2="612" stroke="#ECEAE4"/>
+  <text x="24" y="630" font-family="'JetBrains Mono',monospace" font-size="12" fill="#9A988F">218 字 · 12 行 · 阅读约 1 分钟</text>
+  <circle cx="1086" cy="626" r="3" fill="#5B9F6B"/>
+  <text x="1096" y="630" font-family="'Inter','Noto Sans SC',sans-serif" font-size="12" fill="#9A988F">已保存</text>
+
+  <defs>
+    <filter id="aShadow" x="-20%" y="-20%" width="140%" height="160%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000000" flood-opacity="0.05"/>
+    </filter>
+  </defs>
+</svg>

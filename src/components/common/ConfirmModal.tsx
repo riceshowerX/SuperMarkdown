@@ -2,16 +2,38 @@ import { useEffect, useRef } from 'react';
 import { AlertCircle, CheckCircle2, CloudUpload, TriangleAlert } from 'lucide-react';
 import { useUiStore } from '../../stores/ui.store';
 
-/** 确认对话框（z-modal，危险操作主按钮语义红，Esc/遮罩关闭） */
+/** 确认对话框（z-modal；危险操作主按钮语义红；Esc/遮罩关闭；focus trap；UIUX-V2 §6） */
 export default function ConfirmModal() {
   const confirm = useUiStore((s) => s.confirm);
   const closeConfirm = useUiStore((s) => s.closeConfirm);
   const cancelRef = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!confirm) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') closeConfirm();
+      if (e.key === 'Escape') {
+        closeConfirm();
+        return;
+      }
+      // 简易 focus trap：Tab 在对话框内循环
+      if (e.key === 'Tab') {
+        const el = dialogRef.current;
+        if (!el) return;
+        const focusables = Array.from(
+          el.querySelectorAll<HTMLElement>('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'),
+        ).filter((n) => !n.hasAttribute('disabled'));
+        if (focusables.length === 0) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
     };
     window.addEventListener('keydown', onKey);
     cancelRef.current?.focus();
@@ -28,13 +50,16 @@ export default function ConfirmModal() {
       }}
     >
       <div
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="sm-confirm-title"
-        className="w-full max-w-sm rounded-lg bg-surface p-5 shadow-[var(--elev-raised)]"
+        className="overlay-enter w-full max-w-sm rounded-[var(--radius-lg)] bg-surface-raised p-5 shadow-[var(--elev-popover)]"
       >
-        <div className="mb-2 flex items-center gap-2">
-          <TriangleAlert size={18} className="text-warn" aria-hidden />
+        <div className="mb-2 flex items-center gap-3">
+          <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-md ${confirm.danger ? 'bg-danger/10' : 'bg-accent/10'}`}>
+            <TriangleAlert size={16} className={confirm.danger ? 'text-danger' : 'text-accent'} aria-hidden />
+          </span>
           <h2 id="sm-confirm-title" className="tx-base wt-semibold text-fg">
             {confirm.title}
           </h2>
@@ -45,7 +70,7 @@ export default function ConfirmModal() {
             ref={cancelRef}
             type="button"
             onClick={closeConfirm}
-            className="inline-flex h-11 items-center rounded-md px-3 tx-sm wt-medium text-fg hover:bg-surface-warm transition-colors duration-150 md:h-9"
+            className="inline-flex h-11 items-center rounded-md px-3 tx-sm wt-medium text-fg transition-colors duration-150 hover:bg-surface-warm md:h-9"
           >
             {confirm.cancelLabel ?? '取消'}
           </button>
@@ -79,7 +104,7 @@ export function SaveIndicator({ status }: { status: 'idle' | 'saving' | 'saved' 
   if (status === 'saving') {
     return (
       <span className="inline-flex items-center gap-1 text-warn" aria-live="polite">
-        <CloudUpload size={12} aria-hidden /> 保存中
+        <CloudUpload size={12} className="save-pulse" aria-hidden /> 保存中
       </span>
     );
   }

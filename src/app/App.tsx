@@ -2,9 +2,12 @@ import { useEffect } from 'react';
 import AppShell from '../components/layout/AppShell';
 import ConfirmModal from '../components/common/ConfirmModal';
 import Toasts from '../components/common/Toasts';
+import CommandPalette from '../components/common/CommandPalette';
+import ShortcutsPanel from '../components/common/ShortcutsPanel';
 import { useDocumentsStore } from '../stores/documents.store';
 import { useEditorStore } from '../stores/editor.store';
 import { useAutoSave } from '../hooks/useAutoSave';
+import { useGlobalShortcuts } from '../hooks/useGlobalShortcuts';
 
 /** 根组件：只装配（<100 行，无业务逻辑） */
 export default function App() {
@@ -27,12 +30,15 @@ export default function App() {
   }, [activeDocId]);
 
   useAutoSave();
+  useGlobalShortcuts();
 
   return (
     <>
       <AppShell />
       <ConfirmModal />
       <Toasts />
+      <CommandPalette />
+      <ShortcutsPanel />
     </>
   );
 }
