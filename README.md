@@ -1,8 +1,10 @@
 <div align="center">
 
+<img src="https://img.shields.io/badge/SuperMarkdown-v1.2.0-2563EB.svg" alt="version" />
+
 # SuperMarkdown
 
-**打开即写、图片自包含、数据留在本地的所见即所得 Markdown 编辑器**
+**打开即写 · 图片自包含 · 数据留在本地的所见即所得 Markdown 编辑器**
 
 <p>
   <a href="https://github.com/riceshowerX/SuperMarkdown/blob/main/LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-green.svg" /></a>
@@ -10,12 +12,23 @@
   <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5.8-3178C6.svg" />
   <img alt="Vite 7" src="https://img.shields.io/badge/Vite-7-646CFF.svg" />
   <img alt="Electron 38" src="https://img.shields.io/badge/Electron-38-47848F.svg" />
+  <img alt="Mermaid" src="https://img.shields.io/badge/Mermaid-11-FF3670.svg" />
+  <img alt="KaTeX" src="https://img.shields.io/badge/KaTeX-0.18-008080.svg" />
   <img alt="Tests" src="https://img.shields.io/badge/tests-108%2B%20passing-brightgreen.svg" />
+  <img alt="PRs Welcome" src="https://img.shields.io/badge/PRs-welcome-9A3412.svg" />
 </p>
 
 <p>
-  <em>免费可及 · 本地优先 · 开箱即用 · Web + Electron 双形态</em>
+  <b>免费可及</b> · <b>本地优先</b> · <b>开箱即用</b> · <b>Web + Electron 双形态</b>
 </p>
+
+<div style="margin-top: 8px">
+  <a href="#快速开始">快速开始</a> ·
+  <a href="#功能亮点">功能亮点</a> ·
+  <a href="#图形与公式">图形与公式</a> ·
+  <a href="#技术栈">技术栈</a> ·
+  <a href="#路线图">路线图</a>
+</div>
 
 </div>
 
@@ -25,9 +38,11 @@
 
 ![SuperMarkdown 界面预览](assets/preview.svg)
 
+> 冷色系块面派 UI（C 版）：chrome 退到最弱，编辑器全宽可编辑，Cmd+K 命令面板为核心入口。
+
 ---
 
-## 解决的痛点
+## 为什么选择 SuperMarkdown
 
 | 痛点 | SuperMarkdown 的解法 |
 |------|---------------------|
@@ -64,10 +79,16 @@
 环境要求：**Node.js ≥ 22.12**（已在 v22.22.2 验证）
 
 ```bash
+# Web 版
 git clone https://github.com/riceshowerX/SuperMarkdown.git
 cd SuperMarkdown
 npm install        # 安装依赖
 npm run dev        # 开发服务器 → http://localhost:5173
+
+# Electron 桌面版
+npm run electron:dev      # 构建 + 启动桌面应用
+npm run electron:build    # 构建 NSIS 安装包（release/）
+# 或直接运行便携版：release/win-unpacked/SuperMarkdown.exe
 ```
 
 生产构建与测试：
@@ -76,14 +97,6 @@ npm run dev        # 开发服务器 → http://localhost:5173
 npm run build      # 产物输出到 dist/
 npm run preview    # 本地预览生产构建
 npm run test       # Vitest 单元测试（108+ 用例全绿）
-```
-
-**Electron 桌面版**（Web + 桌面一套核心代码）：
-
-```bash
-npm run electron:dev      # 构建 + 启动桌面应用
-npm run electron:build    # 构建 NSIS 安装包（release/）
-# 或直接运行便携版：release/win-unpacked/SuperMarkdown.exe
 ```
 
 ---
@@ -182,8 +195,8 @@ SuperMarkdown/
 
 ## 质量保证
 
+- **测试覆盖**：108+ 用例全绿，含 XSS 深度回归（`javascript:` 链接 / 双重编码注入 / data URL 拒载）、自动保存竞态、图片 5MB 边界、删除切换相邻文档、存储降级往返
 - **QA 独立验收**：18 条 EARS 验收标准全部通过（P0 缺陷归零）
-- **测试覆盖**：73+ 用例全绿，含 XSS 深度回归（`javascript:` 链接 / 双重编码注入 / data URL 拒载）、自动保存竞态、图片 5MB 边界、删除切换相邻文档、存储降级往返
 - **P0 合规**：无 emoji 图标（全 lucide-react SVG）、无紫粉渐变、无空洞占位文案、无硬编码色值
 
 ---
@@ -205,7 +218,7 @@ SuperMarkdown/
 3. 推送分支（`git push origin feat/xxx`）
 4. 发起 Pull Request
 
-开发前请阅读 `docs/design/MASTER.md`（设计规范）与架构约定；所有提交需通过 `npm run test` + `npm run build`。
+开发前请阅读 `docs/design/DESIGN.md`（设计规范）与架构约定；所有提交需通过 `npm run test` + `npm run build`。
 
 ---
 
@@ -216,5 +229,5 @@ SuperMarkdown/
 <br>
 
 <div align="center">
-  <sub>Built with React 19 · Vite 7 · TypeScript · markdown-it · Dexie · Tailwind CSS</sub>
+  <sub>Built with React 19 · Vite 7 · TypeScript 5.8 · markdown-it · Mermaid · KaTeX · Dexie · Tailwind CSS · Electron 38</sub>
 </div>
