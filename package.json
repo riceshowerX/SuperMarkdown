@@ -2,6 +2,7 @@
   "name": "supermarkdown",
   "version": "1.0.0",
   "type": "module",
+  "main": "electron/main.cjs",
   "description": "打开即写、图片自包含、数据留在本地的所见即所得 Markdown 编辑器",
   "license": "MIT",
   "author": "riceshowerX",
@@ -11,7 +12,10 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "electron:dev": "npm run build && electron .",
+    "electron:build": "npm run build && electron-builder",
+    "electron:dir": "npm run build && electron-builder --dir"
   },
   "dependencies": {
     "@vscode/markdown-it-katex": "^1.1.2",
@@ -36,10 +40,47 @@
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^5.0.4",
+    "electron": "^38.3.0",
+    "electron-builder": "^26.0.0",
     "jsdom": "^26.0.0",
     "tailwindcss": "^4.1.0",
     "typescript": "^5.8.3",
     "vite": "^7.1.0",
     "vitest": "^3.2.0"
+  },
+  "build": {
+    "appId": "com.supermarkdown.app",
+    "productName": "SuperMarkdown",
+    "asar": true,
+    "npmRebuild": false,
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "!node_modules/**/*"
+    ],
+    "electronDownload": {
+      "mirror": "https://npmmirror.com/mirrors/electron/"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "SuperMarkdown"
+    }
   }
 }

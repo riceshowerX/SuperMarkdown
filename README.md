@@ -9,7 +9,8 @@
   <img alt="React 19" src="https://img.shields.io/badge/React-19-61DAFB.svg" />
   <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5.8-3178C6.svg" />
   <img alt="Vite 7" src="https://img.shields.io/badge/Vite-7-646CFF.svg" />
-  <img alt="Tests" src="https://img.shields.io/badge/tests-73%2B%20passing-brightgreen.svg" />
+  <img alt="Electron 38" src="https://img.shields.io/badge/Electron-38-47848F.svg" />
+  <img alt="Tests" src="https://img.shields.io/badge/tests-108%2B%20passing-brightgreen.svg" />
 </p>
 
 <p>
@@ -52,6 +53,7 @@
 | **响应式布局** | 桌面三栏（侧边栏可折叠 + 编辑/预览 50/50 可拖拽）；移动端单栏 Tab + 抽屉 + 底部工具栏 |
 | **格式工具栏** | 14 个高频操作：加粗 / 斜体 / 行内代码 / 链接 / H1-H3 / 引用 / 代码块 / 三类列表 / 表格 / 分隔线 / 图片；桌面集成于顶栏（不遮挡编辑区），移动端为底部条 |
 | **图形与公式** | Mermaid 流程图 / 序列图 / 甘特图 / 饼图（` ```mermaid ` 代码块自动渲染为 SVG，明暗主题跟随）；LaTeX 数学公式（`$...$` 行内 / `$$...$$` 块级，KaTeX 渲染） |
+| **桌面双形态** | **Electron 桌面版**（Web + 桌面一套核心代码）：NSIS 安装包 / 便携版；**打开本地 .md 文件**（原生文件对话框）；安全加固（contextIsolation / sandbox） |
 
 **安全设计**：三层 XSS 防线（markdown-it `html:false` → DOMPurify 白名单 → 严格 CSP），任意输入不执行脚本；禁 eval / new Function。
 
@@ -74,6 +76,14 @@ npm run dev        # 开发服务器 → http://localhost:5173
 npm run build      # 产物输出到 dist/
 npm run preview    # 本地预览生产构建
 npm run test       # Vitest 单元测试（108+ 用例全绿）
+```
+
+**Electron 桌面版**（Web + 桌面一套核心代码）：
+
+```bash
+npm run electron:dev      # 构建 + 启动桌面应用
+npm run electron:build    # 构建 NSIS 安装包（release/）
+# 或直接运行便携版：release/win-unpacked/SuperMarkdown.exe
 ```
 
 ---
@@ -137,6 +147,7 @@ $$\int_0^1 x\,dx = \frac{1}{2}$$
 | 存储 | Dexie（IndexedDB） | ^4.0.0 |
 | 图标 | lucide-react | ^0.544.0 |
 | 样式 | Tailwind CSS | ^4.1.0 |
+| 桌面 | Electron + electron-builder | ^38.8.6 / ^26.15.3 |
 | 测试 | Vitest + Testing Library | ^3.2.0 / ^16.0.0 |
 
 ---
@@ -147,19 +158,22 @@ $$\int_0^1 x\,dx = \frac{1}{2}$$
 SuperMarkdown/
 ├── index.html                  # 入口 HTML（含严格 CSP meta）
 ├── package.json
-├── vite.config.ts              # Vite 7 + Tailwind 4 + Vitest 装配
+├── vite.config.ts              # Vite 7 + Tailwind 4 + Vitest 装配（base './'）
+├── electron/                   # Electron 桌面壳
+│   ├── main.cjs                # 主进程（安全基线 + 本地 .md IPC + 外链拦截）
+│   └── preload.cjs             # contextBridge 白名单（仅 openLocalMarkdown）
 ├── assets/                     # 文档资源（preview.svg 等）
-├── docs/design/                # 设计源（MASTER 全局规范 / PAGES 页面提示词）
+├── docs/design/                # 设计源（DESIGN 全局规范 / PAGES 页面提示词）
 └── src/
-    ├── main.tsx                # 入口：主题初始化防闪烁 + 装配（21 行）
-    ├── app/                    # 根组件（38 行）
+    ├── main.tsx                # 入口：主题初始化防闪烁 + 装配
+    ├── app/                    # 根组件
     ├── components/             # layout / sidebar / editor / preview / toolbar / common
-    ├── services/               # markdown / storage / export / clipboard / stats
+    ├── services/               # markdown / storage / export / clipboard / stats / desktop
     ├── stores/                 # documents / editor / ui（zustand）
-    ├── hooks/                  # useAutoSave / useTheme / usePasteImage ...
+    ├── hooks/                  # useAutoSave / useTheme / usePasteImage / useMermaidRender ...
     ├── styles/                 # design-tokens.css（设计 Token）/ preview.css
     ├── types/ utils/ config/   # 模型 / 纯工具 / 常量
-    └── __tests__/              # 11 个测试文件（73+ 用例）
+    └── __tests__/              # 14 个测试文件（108+ 用例）
 ```
 
 **架构约定**：单文件 ≤ 300 行（入口 < 100）；依赖只向下；Service 不 import React；组件不直接触碰 IndexedDB；图标全部 lucide-react 具名导入；颜色全部引用设计 Token。
@@ -179,7 +193,7 @@ SuperMarkdown/
 | 版本 | 阶段 | 规划 |
 |------|------|------|
 | **v1.1** | 打磨期 | 触控 44px 收尾 · 构建 code-split · 分屏滚动同步 · 快捷键面板 · 导入 .md |
-| **v1.2** | 桌面双形态 | Electron 38 封装（NSIS 安装包）· 打开本地 .md · 导出 PDF · 自动更新 |
+| **v1.2** | 桌面双形态 | Electron 38 封装（NSIS 安装包 / 便携版，已完成）· 打开本地 .md（已完成）· 导出 PDF · 自动更新 |
 | **v2.0** | 扩展期 | Tauri 2 瘦身（<10MB）· 移动端 PWA · 云同步（评估）· 主题/插件 |
 
 ---

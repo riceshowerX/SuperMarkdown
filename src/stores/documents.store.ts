@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import type { Document } from '../types/models';
 import { getStorageService } from '../services/storage/storage.service';
+import { openLocalMarkdown } from '../services/desktop/desktop.service';
 import { toAppError } from '../utils/errors';
 import { useEditorStore } from './editor.store';
 import { useUiStore } from './ui.store';
@@ -17,6 +18,8 @@ interface DocumentsState {
   initialize: () => Promise<void>;
   refreshList: () => Promise<void>;
   createDocument: () => Promise<string | null>;
+  /** 打开本地 .md 导入为新文档（Electron IPC / Web 文件选择器，取消则静默） */
+  openLocalMarkdownFile: () => Promise<void>;
   deleteDocument: (id: string) => Promise<void>;
   renameDocument: (id: string, title: string) => Promise<void>;
   setActiveDocId: (id: string | null) => Promise<void>;
@@ -88,6 +91,25 @@ export const useDocumentsStore = create<DocumentsState>()((set, get) => ({
       const appErr = toAppError(err);
       useUiStore.getState().pushToast({ kind: 'error', title: '新建失败', message: appErr.userMessage });
       return null;
+    }
+  },
+
+  openLocalMarkdownFile: async () => {
+    try {
+      // 切换前 flush 当前文档待保存内容（不丢稿）
+      await useEditorStore.getState().flushSave();
+      const file = await openLocalMarkdown();
+      if (!file) return; // 用户取消，静默
+      const storage = await getStorageService();
+      const docs = get().documents;
+      const title = file.title || `无标题文档 ${docs.length + 1}`;
+      const doc = await storage.createDocument({ title, content: file.content });
+      const next = [doc, ...docs].sort((a, b) => b.updatedAt - a.updatedAt);
+      set({ documents: next, activeDocId: doc.id });
+      useUiStore.getState().pushToast({ kind: 'success', title: '已导入', message: title });
+    } catch (err) {
+      const appErr = toAppError(err);
+      useUiStore.getState().pushToast({ kind: 'error', title: '打开失败', message: appErr.userMessage });
     }
   },
 

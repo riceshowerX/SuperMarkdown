@@ -18,6 +18,8 @@ function devCspRelax(): Plugin {
 }
 
 export default defineConfig({
+  // 相对路径资源：兼容 Electron 壳 file:// 加载 dist/（架构 §12.2），Web 形态任选挂载路径亦可用
+  base: './',
   plugins: [react(), tailwindcss(), devCspRelax()],
   server: {
     port: 5173,

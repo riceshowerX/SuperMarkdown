@@ -1,4 +1,4 @@
-import { FilePlus2, PanelLeftOpen } from 'lucide-react';
+import { FilePlus2, FolderOpen, PanelLeftOpen } from 'lucide-react';
 import { useDocumentsStore } from '../../stores/documents.store';
 import { useUiStore } from '../../stores/ui.store';
 import SearchBox from './SearchBox';
@@ -10,6 +10,7 @@ export default function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
   const collapsed = useUiStore((s) => s.sidebarCollapsed);
   const toggleSidebar = useUiStore((s) => s.toggleSidebar);
   const createDocument = useDocumentsStore((s) => s.createDocument);
+  const openLocalMarkdownFile = useDocumentsStore((s) => s.openLocalMarkdownFile);
   const docCount = useDocumentsStore((s) => s.documents.length);
   const isDrawer = typeof onNavigate === 'function';
 
@@ -23,6 +24,7 @@ export default function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
           className="text-accent"
           iconSize={20}
         />
+        <IconButton icon={FolderOpen} label="打开本地 Markdown" onClick={() => void openLocalMarkdownFile()} iconSize={20} />
         <IconButton icon={PanelLeftOpen} label="展开侧边栏" onClick={toggleSidebar} iconSize={20} />
       </aside>
     );
@@ -39,6 +41,14 @@ export default function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
         >
           <FilePlus2 size={18} strokeWidth={1.8} aria-hidden />
           新建文档
+        </button>
+        <button
+          type="button"
+          onClick={() => void openLocalMarkdownFile()}
+          className="inline-flex h-11 w-full items-center justify-center gap-1.5 rounded-md border border-border bg-transparent tx-sm wt-medium text-fg-2 transition-colors duration-150 hover:bg-surface-warm hover:text-fg active:bg-surface-warm md:h-9"
+        >
+          <FolderOpen size={18} strokeWidth={1.8} aria-hidden />
+          打开本地 Markdown
         </button>
       </div>
       <DocumentList onNavigate={onNavigate} />
