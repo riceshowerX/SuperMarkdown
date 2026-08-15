@@ -15,14 +15,17 @@ import { useDocumentsStore } from '../../stores/documents.store';
 import { useEditorStore } from '../../stores/editor.store';
 import { useUiStore } from '../../stores/ui.store';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
+import { runEditorCommand, insertAtCursorBus } from '../../hooks/editorCommandBus';
 import { exportCurrentDocument } from '../../app/actions';
 import { toAppError } from '../../utils/errors';
 import ThemeToggle from '../common/ThemeToggle';
 import IconButton from './IconButton';
+import FormatToolbar from '../editor/FormatToolbar';
 
-/** 顶栏 AppBar（PAGES §2）：Logo + 标题重命名 + 导出 + 视图模式 + 主题 */
+/** 顶栏 AppBar（PAGES §2）：Logo + 标题重命名 + 格式工具栏(appbar 内嵌) + 导出 + 视图模式 + 主题 */
 export default function Toolbar() {
   const isMobile = useMediaQuery('(max-width: 767px)');
+  const viewMode = useUiStore((s) => s.viewMode);
   const activeDoc = useDocumentsStore((s) => s.documents.find((d) => d.id === s.activeDocId));
   const renameDocument = useDocumentsStore((s) => s.renameDocument);
   const editorContent = useEditorStore((s) => s.content);
@@ -105,6 +108,16 @@ export default function Toolbar() {
       )}
 
       <div className="flex-1" />
+
+      {/* 格式工具栏（AppBar 内嵌：不遮挡编辑器、不占编辑区高度；仅编辑/分屏视图显示） */}
+      {!isMobile && viewMode !== 'preview' && (
+        <FormatToolbar
+          appbar
+          onCommand={runEditorCommand}
+          onInsertImage={insertAtCursorBus}
+          onOpenShortcuts={() => useUiStore.getState().setShortcutsOpen(true)}
+        />
+      )}
 
       {/* 命令面板入口（Cmd+K；移动端只留图标，文案隐藏） */}
       <button

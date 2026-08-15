@@ -33,6 +33,8 @@ import { toAppError } from '../../utils/errors';
 interface FormatToolbarProps {
   floating?: boolean;
   compact?: boolean;
+  /** AppBar 内嵌模式：透明无边框，紧凑按钮，不占编辑区高度 */
+  appbar?: boolean;
   onCommand: (cmd: EditorCommand) => void;
   onInsertImage: (text: string) => void;
   /** 打开快捷键面板（溢出菜单入口，批次 3 接入） */
@@ -82,7 +84,7 @@ const COMPACT_CMDS: EditorCommand[] = ['bold', 'italic', 'h1', 'h2', 'quote', 'c
  * 格式工具栏：桌面悬浮胶囊（floating）/ 移动端底部条（compact）
  * 分组收敛 ≤11 可见 + 溢出菜单；按钮 title 含快捷键（被动学习）；图片走文件选择 → 光标处插入
  */
-export default function FormatToolbar({ floating = false, compact = false, onCommand, onInsertImage, onOpenShortcuts }: FormatToolbarProps) {
+export default function FormatToolbar({ floating = false, compact = false, appbar = false, onCommand, onInsertImage, onOpenShortcuts }: FormatToolbarProps) {
   const hasDoc = useEditorStore((s) => s.docId !== null);
   const [moreOpen, setMoreOpen] = useState(false);
   const moreRef = useRef<HTMLDivElement>(null);
@@ -95,17 +97,20 @@ export default function FormatToolbar({ floating = false, compact = false, onCom
     return () => document.removeEventListener('mousedown', onDocClick);
   }, []);
 
-  const visibleGroups = compact ? [GROUPS.flat().filter((i) => COMPACT_CMDS.includes(i.cmd))] : GROUPS;
-  const overflowItems = compact
+  const isCompact = compact || appbar;
+  const visibleGroups = isCompact ? [GROUPS.flat().filter((i) => COMPACT_CMDS.includes(i.cmd))] : GROUPS;
+  const overflowItems = isCompact
     ? FLAT_ITEMS.filter((i) => !COMPACT_CMDS.includes(i.cmd))
     : OVERFLOW_ITEMS;
 
   return (
     <div
       className={`${
-        floating
-          ? 'flex shrink-0 items-center justify-center gap-1 border-b border-border bg-surface px-2 py-1.5'
-          : 'flex h-[52px] shrink-0 items-center justify-center gap-1 border-t border-border bg-surface px-2 pb-[env(safe-area-inset-bottom)]'
+        appbar
+          ? 'flex items-center gap-0.5'
+          : floating
+            ? 'flex shrink-0 items-center justify-center gap-1 border-b border-border bg-surface px-2 py-1.5'
+            : 'flex h-[52px] shrink-0 items-center justify-center gap-1 border-t border-border bg-surface px-2 pb-[env(safe-area-inset-bottom)]'
       }`}
       role="toolbar"
       aria-label="格式工具栏"
@@ -124,7 +129,7 @@ export default function FormatToolbar({ floating = false, compact = false, onCom
               <ToolButton
                 key={item.cmd}
                 item={item}
-                compact={compact}
+                compact={appbar ? 'appbar' : isCompact}
                 disabled={!hasDoc}
                 onClick={() => onCommand(item.cmd)}
               />
@@ -143,7 +148,7 @@ export default function FormatToolbar({ floating = false, compact = false, onCom
             disabled={!hasDoc}
             onClick={() => setMoreOpen((v) => !v)}
             className={`inline-flex items-center justify-center rounded-md text-fg-2 transition-colors duration-150 hover:bg-surface-sunken active:bg-accent-soft disabled:opacity-40 disabled:pointer-events-none ${
-              compact ? 'h-11 w-11' : 'h-[30px] w-[30px]'
+              appbar ? 'h-7 w-7' : compact ? 'h-11 w-11' : 'h-[30px] w-[30px]'
             }`}
           >
             <MoreHorizontal size={16} strokeWidth={1.8} aria-hidden />
@@ -228,7 +233,8 @@ function ToolButton({
   onClick,
 }: {
   item: ToolItem;
-  compact?: boolean;
+  /** boolean=true 移动端 44px；'appbar' 顶栏内嵌 28px */
+  compact?: boolean | 'appbar';
   disabled: boolean;
   onClick: () => void;
 }) {
@@ -241,7 +247,7 @@ function ToolButton({
       disabled={disabled}
       onClick={onClick}
       className={`inline-flex items-center justify-center rounded-md text-fg-2 transition-colors duration-150 hover:bg-surface-sunken active:bg-accent-soft disabled:opacity-40 disabled:pointer-events-none ${
-        compact ? 'h-11 w-11' : 'h-[30px] w-[30px]'
+        compact === 'appbar' ? 'h-7 w-7' : compact ? 'h-11 w-11' : 'h-[30px] w-[30px]'
       }`}
     >
       <item.icon size={16} strokeWidth={1.8} aria-hidden />
