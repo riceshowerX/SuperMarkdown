@@ -1,6 +1,6 @@
 {
   "name": "supermarkdown",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "type": "module",
   "main": "electron/main.cjs",
   "description": "打开即写、图片自包含、数据留在本地的所见即所得 Markdown 编辑器",
