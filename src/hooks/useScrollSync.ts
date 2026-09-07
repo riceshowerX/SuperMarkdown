@@ -18,52 +18,54 @@ function applySync(source: HTMLElement, target: HTMLElement): void {
   }
 }
 
-let editorListener: (() => void) | null = null;
-let previewListener: (() => void) | null = null;
 let lock = false;
 
-function tearDown() {
-  if (editorListener) {
-    const el = registry.editor;
-    el?.removeEventListener('scroll', editorListener);
-    editorListener = null;
+/** 防抖实例提升到模块级（SM-30/69）：tearDown 可跨 wire() 调用统一 cancel，
+ *  避免旧实例的 pending 定时器在容器已解绑后仍触发 */
+const syncToPreview = debounce(() => {
+  if (lock || !registry.editor || !registry.preview) return;
+  lock = true;
+  applySync(registry.editor, registry.preview);
+  requestAnimationFrame(() => {
+    lock = false;
+  });
+}, 150);
+
+const syncToEditor = debounce(() => {
+  if (lock || !registry.editor || !registry.preview) return;
+  lock = true;
+  applySync(registry.preview, registry.editor);
+  requestAnimationFrame(() => {
+    lock = false;
+  });
+}, 150);
+
+/** 已挂载的监听（成对保存 el + fn，SM-30/69：tearDown 按此移除，不从 registry 现值反查） */
+const wiredListeners: Array<{ el: HTMLElement; fn: () => void }> = [];
+
+function tearDown(): void {
+  // 取消在途防抖，防止卸载/重绑后在旧容器上触发同步
+  syncToPreview.cancel();
+  syncToEditor.cancel();
+  for (const { el, fn } of wiredListeners) {
+    el.removeEventListener('scroll', fn);
   }
-  if (previewListener) {
-    const el = registry.preview;
-    el?.removeEventListener('scroll', previewListener);
-    previewListener = null;
-  }
+  wiredListeners.length = 0;
 }
 
 /** 双向绑定；两侧容器齐备才生效（分屏视图），任一缺失自动解除 */
-function wire() {
+function wire(): void {
   tearDown();
   const ed = registry.editor;
   const pv = registry.preview;
   if (!ed || !pv) return;
 
-  const syncToPreview = debounce(() => {
-    if (lock || !registry.editor || !registry.preview) return;
-    lock = true;
-    applySync(registry.editor, registry.preview);
-    requestAnimationFrame(() => {
-      lock = false;
-    });
-  }, 150);
+  const onEditorScroll = () => syncToPreview();
+  const onPreviewScroll = () => syncToEditor();
 
-  const syncToEditor = debounce(() => {
-    if (lock || !registry.editor || !registry.preview) return;
-    lock = true;
-    applySync(registry.preview, registry.editor);
-    requestAnimationFrame(() => {
-      lock = false;
-    });
-  }, 150);
-
-  editorListener = () => syncToPreview();
-  previewListener = () => syncToEditor();
-  ed.addEventListener('scroll', editorListener, { passive: true });
-  pv.addEventListener('scroll', previewListener, { passive: true });
+  ed.addEventListener('scroll', onEditorScroll, { passive: true });
+  pv.addEventListener('scroll', onPreviewScroll, { passive: true });
+  wiredListeners.push({ el: ed, fn: onEditorScroll }, { el: pv, fn: onPreviewScroll });
 }
 
 /** 注册/注销某侧的滚动容器；返回注销函数 */

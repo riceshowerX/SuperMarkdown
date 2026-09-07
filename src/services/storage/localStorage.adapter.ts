@@ -1,6 +1,7 @@
 import type { Document } from '../../types/models';
 import type { StorageAdapter } from './storage.adapter';
-import { STORAGE_FALLBACK_KEY } from '../../config/constants';
+import { STORAGE_FALLBACK_KEY, STORAGE_CORRUPT_PREFIX } from '../../config/constants';
+import { isDocument } from '../../types/guards';
 
 /**
  * localStorage 兜底适配器（架构 §7.3）
@@ -18,7 +19,18 @@ export class LocalStorageAdapter implements StorageAdapter {
       const raw = localStorage.getItem(this.key);
       if (!raw) return [];
       const parsed: unknown = JSON.parse(raw);
-      return Array.isArray(parsed) ? (parsed as Document[]) : [];
+      if (!Array.isArray(parsed)) return [];
+      // SM-20：字段级校验，整体丢弃脏条目（而非部分合并，防止脏键进入内存对象）
+      const valid = parsed.filter(isDocument);
+      if (valid.length !== parsed.length) {
+        // 丢弃前先把原始 JSON 留底，便于人工恢复（备份失败不阻塞读取）
+        try {
+          localStorage.setItem(`${STORAGE_CORRUPT_PREFIX}${Date.now()}`, raw);
+        } catch {
+          /* 备份失败忽略 */
+        }
+      }
+      return valid;
     } catch {
       return [];
     }

@@ -9,6 +9,9 @@ import { useMediaQuery } from '../../hooks/useMediaQuery';
 import { buildPaletteItems, groupPaletteItems, readRecent, recordRecent, type BuildItemsDeps, type RecentDoc } from './paletteItems';
 import PaletteRow from './PaletteRow';
 
+/** SM-50：面板关闭时的稳定空列表（避免 useMemo 返回新数组引发下游抖动） */
+const EMPTY_ITEMS: ReturnType<typeof buildPaletteItems> = [];
+
 /** 命令面板（Cmd+K，UIUX-V2 §5.2）：最近使用/动作/文档搜索/格式/帮助，自建轻量版 */
 export default function CommandPalette() {
   const open = useUiStore((s) => s.commandPaletteOpen);
@@ -51,11 +54,15 @@ export default function CommandPalette() {
   }, [open, setOpen]);
 
   const items = useMemo(() => {
+    // SM-50：面板关闭时直接返回空列表，跳过 deps 构建（含闭包与图标映射）等无谓开销
+    if (!open) return EMPTY_ITEMS;
     const resolvedDark = resolveTheme(theme) === 'dark';
+    // SM-50：过滤「最近使用」中已被删除的文档
+    const liveRecent = recent.filter((r) => documents.some((d) => d.id === r.id));
     const deps: BuildItemsDeps = {
       query,
       documents,
-      recent,
+      recent: liveRecent,
       theme,
       resolvedDark,
       typewriterMode,
@@ -100,7 +107,7 @@ export default function CommandPalette() {
     };
     return buildPaletteItems(deps);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query, documents, recent, theme, typewriterMode]);
+  }, [open, query, documents, recent, theme, typewriterMode]);
 
   const groups = useMemo(() => groupPaletteItems(items), [items]);
 

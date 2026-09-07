@@ -32,3 +32,15 @@ export const SAVED_IDLE_MS = 2000;
 
 /** 成功 Toast 自动消失时长 */
 export const TOAST_DURATION_MS = 5000;
+
+/** 单文档图片累计内嵌上限 20MB（SM-10：只有单张 5MB 上限会累积出不可用的大文档） */
+export const DOC_MAX_IMAGE_BYTES_TOTAL = 20 * 1024 * 1024;
+
+/** 图片解码像素硬上限（SM-60：约 6300×6300，防解压炸弹撑爆 canvas） */
+export const IMAGE_MAX_PIXELS = 40_000_000;
+
+/** 关窗兜底缓冲 localStorage 键（SM-09：内容必须带 docId） */
+export const CRASH_BUFFER_KEY = 'sm-crash-buffer';
+
+/** localStorage 兜底库损坏数据备份键前缀（SM-20：丢弃脏条目前先留底） */
+export const STORAGE_CORRUPT_PREFIX = 'sm_docs_backup_corrupt_';

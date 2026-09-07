@@ -1,4 +1,4 @@
-import { useEffect, useRef, type RefObject } from 'react';
+import { memo, useEffect, useMemo, useRef, type RefObject } from 'react';
 
 interface Props {
   content: string;
@@ -14,15 +14,21 @@ interface Props {
  * 光标行高亮镜面层：与 textarea 同字体/同内边距渲染全部文本，仅当前行带极淡底色。
  * 文本透明（color: transparent），只露出背景；滚动与 textarea 同步（aria-hidden，不参与交互）。
  * UIUX-V2 §5.1 光标行高亮（textarea 可实现，不改内核）。
+ *
+ * SM-14：memo 化——父组件（拖拽分栏/主题切换等）重渲染时本组件跳过 reconcile，
+ * 避免大文档下每帧重建全部行 span。
+ * 注：未做「可视窗口 ±20 行 + padding 撑高」的窗口化——textarea 为 whitespace-pre-wrap，
+ * 长行会折行，固定行高 padding 会与 textarea 实际折行错位；窗口化需引入逐行像素测量，
+ * 留待后续迭代（见审查报告 PERF-01）。
  */
-export default function ActiveLineHighlight({ content, cursorLine, hasVScroll, scrollTop, activeLineRef }: Props) {
+function ActiveLineHighlightImpl({ content, cursorLine, hasVScroll, scrollTop, activeLineRef }: Props) {
   const preRef = useRef<HTMLPreElement>(null);
 
   useEffect(() => {
     if (preRef.current) preRef.current.scrollTop = scrollTop;
   }, [scrollTop]);
 
-  const lines = content.split('\n');
+  const lines = useMemo(() => content.split('\n'), [content]);
   const padX = 'var(--space-8)';
   const padRight = hasVScroll ? `calc(${padX} + 8px)` : padX;
 
@@ -42,3 +48,7 @@ export default function ActiveLineHighlight({ content, cursorLine, hasVScroll, s
     </pre>
   );
 }
+
+/** SM-14：浅比较 props，content 未变（或仅父级无关状态变化）时跳过重渲染 */
+const ActiveLineHighlight = memo(ActiveLineHighlightImpl);
+export default ActiveLineHighlight;

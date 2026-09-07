@@ -28,7 +28,8 @@ export default function Toolbar() {
   const viewMode = useUiStore((s) => s.viewMode);
   const activeDoc = useDocumentsStore((s) => s.documents.find((d) => d.id === s.activeDocId));
   const renameDocument = useDocumentsStore((s) => s.renameDocument);
-  const editorContent = useEditorStore((s) => s.content);
+  // SM-66：只订阅派生布尔值——避免订阅全文 content 导致每次击键重建整个顶栏
+  const hasContent = useEditorStore((s) => s.content.trim() !== '');
   const saveStatus = useEditorStore((s) => s.saveStatus);
   const setMobileSidebarOpen = useUiStore((s) => s.setMobileSidebarOpen);
   const setCommandPaletteOpen = useUiStore((s) => s.setCommandPaletteOpen);
@@ -38,7 +39,6 @@ export default function Toolbar() {
   const [exportOpen, setExportOpen] = useState(false);
   const exportRef = useRef<HTMLDivElement>(null);
 
-  const hasContent = editorContent.trim() !== '';
   const isSaving = saveStatus === 'saving' || saveStatus === 'error';
 
   useEffect(() => {

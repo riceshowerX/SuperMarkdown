@@ -3,6 +3,7 @@ import { AlertCircle, Focus } from 'lucide-react';
 import { useEditorStore } from '../../stores/editor.store';
 import { useDocumentsStore } from '../../stores/documents.store';
 import { useUiStore } from '../../stores/ui.store';
+import { useDebouncedValue } from '../../hooks/useDebouncedValue';
 import { computeStats } from '../../services/stats/stats.service';
 import { SaveIndicator } from './ConfirmModal';
 
@@ -14,7 +15,9 @@ export default function StatusBar() {
   const fallbackMode = useDocumentsStore((s) => s.fallbackMode);
   const typewriterMode = useUiStore((s) => s.typewriterMode);
   const toggleTypewriter = useUiStore((s) => s.toggleTypewriter);
-  const stats = useMemo(() => computeStats(content), [content]);
+  // SM-42：统计值防抖 500ms，脱离击键热路径（字数展示无需逐字符实时）
+  const statsContent = useDebouncedValue(content, 500);
+  const stats = useMemo(() => computeStats(statsContent), [statsContent]);
 
   // 已保存后淡为圆点（2s 由 store 转 idle 后仍保留小圆点）
   const [savedOnce, setSavedOnce] = useState(false);

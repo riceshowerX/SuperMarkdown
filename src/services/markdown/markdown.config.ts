@@ -1,6 +1,7 @@
 import MarkdownIt from 'markdown-it';
 import taskLists from 'markdown-it-task-lists';
 import katexPluginImport from '@vscode/markdown-it-katex';
+import { escapeHtml } from '../../utils/html';
 import hljs from 'highlight.js/lib/core';
 import javascript from 'highlight.js/lib/languages/javascript';
 import typescript from 'highlight.js/lib/languages/typescript';
@@ -35,10 +36,6 @@ const katexPlugin =
   (katexPluginImport as unknown as { default?: typeof katexPluginImport }).default ??
   katexPluginImport;
 
-function escapeHtml(str: string): string {
-  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
-
 /**
  * markdown-it 实例唯一创建点（架构 §9.1 / §11.2 第一层防线）
  * - html: false → 原始 HTML 一律转义为文本
@@ -68,6 +65,15 @@ export function createMarkdownIt(): MarkdownIt {
     },
   });
   md.use(taskLists, { enabled: true, label: false });
-  md.use(katexPlugin, { throwOnError: false });
+  // SM-34：KaTeX 安全开关显式锁死，不依赖上游默认值——
+  // trust:false 禁用 \href/\url/\includegraphics/\html* 等 trust 类命令；
+  // maxExpand 限制宏展开次数（防 LaTeX 宏炸弹）；maxSize 限制尺寸单位防超大盒子
+  md.use(katexPlugin, {
+    throwOnError: false,
+    trust: false,
+    strict: 'ignore',
+    maxExpand: 1000,
+    maxSize: 200,
+  });
   return md;
 }

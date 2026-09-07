@@ -1,0 +1,63 @@
+name: Bug 报告
+description: 报告一个可复现的问题
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢反馈。请先搜索现有 Issue，避免重复提交。
+        如果问题涉及安全漏洞（XSS / 数据丢失 / 越权），请**不要**在这里公开描述，改用 [SECURITY.md](../blob/main/SECURITY.md) 中的私密上报渠道。
+
+  - type: dropdown
+    id: form
+    attributes:
+      label: 使用形态
+      options:
+        - Web（浏览器访问）
+        - Electron 桌面版（Windows）
+    validations:
+      required: true
+
+  - type: textarea
+    id: env
+    attributes:
+      label: 环境信息
+      description: 浏览器及版本 / 操作系统 / 应用版本（Web 版填"最新"即可）
+      placeholder: "例：Edge 130 / Windows 11 / v1.2.0"
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤
+      description: 从打开应用开始，逐步描述到问题出现
+      placeholder: |
+        1. 打开应用
+        2. 在文档中输入……
+        3. 点击……
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期望行为
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: 实际行为
+      description: 如涉及渲染错误，请贴出导致问题的 Markdown 片段
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: 控制台报错 / 截图
+      description: DevTools Console 输出或截图（注意先隐去个人内容）
+    validations:
+      required: false

@@ -17,8 +17,10 @@ function isTypingTarget(target: EventTarget | null): boolean {
 export function useGlobalShortcuts(): void {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      const typing = isTypingTarget(e.target);
       const ui = useUiStore.getState();
+      // SM-45：确认框打开时全局快捷键一律短路，避免 Enter/方向键误触发对话框之外的动作
+      if (ui.confirm) return;
+      const typing = isTypingTarget(e.target);
 
       // ⌘K 命令面板
       if (matchesShortcut(['meta', 'k'], e)) {
@@ -44,17 +46,17 @@ export function useGlobalShortcuts(): void {
         void useEditorStore.getState().flushSave();
         return;
       }
-      // ⌘⇧T 主题切换
-      if (matchesShortcut(['meta', 'shift', 't'], e)) {
-        e.preventDefault();
-        const resolved = resolveTheme(ui.theme);
-        ui.setTheme(resolved === 'dark' ? 'light' : 'dark');
-        return;
-      }
-      // Ctrl+Shift+T 打字机模式
+      // Ctrl+Shift+T 打字机模式（SM-07：置于主题切换之前——非 Mac 下 meta 即 Ctrl，两键冲突时打字机优先）
       if (matchesShortcut(['ctrl', 'shift', 't'], e)) {
         e.preventDefault();
         ui.toggleTypewriter();
+        return;
+      }
+      // ⌘⇧T 主题切换（SM-07：排除字面 Ctrl——非 Mac 下与打字机同键，主题快捷键仅 Mac 生效）
+      if (matchesShortcut(['meta', 'shift', 't'], e) && !e.ctrlKey) {
+        e.preventDefault();
+        const resolved = resolveTheme(ui.theme);
+        ui.setTheme(resolved === 'dark' ? 'light' : 'dark');
         return;
       }
       // ⌘\ 循环视图

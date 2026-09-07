@@ -8,6 +8,7 @@ import './index.css';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './app/App';
+import AppErrorBoundary from './components/common/AppErrorBoundary';
 import { setupGlobalErrorHandlers } from './utils/errors';
 
 setupGlobalErrorHandlers();
@@ -17,6 +18,9 @@ if (!rootEl) throw new Error('root element not found');
 
 createRoot(rootEl).render(
   <StrictMode>
-    <App />
+    {/* SM-44：应用级错误边界——渲染期未捕获异常不白屏 */}
+    <AppErrorBoundary>
+      <App />
+    </AppErrorBoundary>
   </StrictMode>,
 );

@@ -34,7 +34,10 @@ export default function AppShell() {
     <div className="flex h-dvh flex-col overflow-hidden bg-bg text-fg font-body">
       <Toolbar />
       <div className="flex min-h-0 flex-1">
-        {isMobile ? (
+        {initError ? (
+          // SM-05：初始化错误优先于任何布局分支展示，移动端也能看到错误卡片并重试
+          <InitError onRetry={() => void initialize()} message={initError} />
+        ) : isMobile ? (
           <>
             <MobileShell />
             {mobileSidebarOpen && (
@@ -48,8 +51,6 @@ export default function AppShell() {
               </div>
             )}
           </>
-        ) : initError ? (
-          <InitError onRetry={() => void initialize()} message={initError} />
         ) : (
           <>
             <Sidebar />

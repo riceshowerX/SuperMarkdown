@@ -12,14 +12,26 @@ export function downloadBlob(blob: Blob, filename: string): void {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-/** 去除文件名非法字符（Windows: \ / : * ? " < > |），空则回退默认名 */
+/** Windows 保留设备名（含带扩展名形态，如 CON.txt） */
+const WIN_RESERVED_NAME_RE = /^(con|prn|aux|nul|com[1-9]|lpt[1-9])$/i;
+
+/** 去除文件名非法字符（Windows: \ / : * ? " < > |），并做加固（SM-38/46）：
+ *  剥离控制字符与首尾的 `.` / `-` / 空格（防 ".."、隐藏文件、尾点截断问题）；
+ *  截断按 Unicode 码点进行（不劈开代理对）；Windows 保留设备名追加 `_` 回落。空则回退默认名。 */
 export function sanitizeFileName(name: string, fallback = '无标题文档'): string {
   const cleaned = name
+    // eslint-disable-next-line no-control-regex
+    .replace(/[\u0000-\u001f\u007f]/g, '')
     .replace(/[\\/:*?"<>|]/g, '-')
     .replace(/\s+/g, ' ')
-    .trim()
-    .slice(0, 80);
-  return cleaned || fallback;
+    .replace(/^[.\- ]+/, '')
+    .replace(/[.\- ]+$/, '');
+  // 按码点截断，避免把 surrogate pair 劈成半截产生乱码
+  const truncated = [...cleaned].slice(0, 80).join('');
+  if (!truncated) return fallback;
+  // 保留设备名以「首个点之前的主名」判定（CON.txt 同样被 Windows 拒绝）
+  const base = truncated.split('.')[0] ?? truncated;
+  return WIN_RESERVED_NAME_RE.test(base) ? `_${truncated}` : truncated;
 }
 
 /** 时间戳 yyyyMMdd-HHmmss */

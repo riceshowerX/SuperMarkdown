@@ -1,5 +1,10 @@
 # SuperMarkdown DESIGN.md — 全局设计源（MASTER）
 
+> ⚠️ **废止声明（2026-09-08）**：本文件为 v1.1（暖纸 + Teal）历史版本，**色彩、尺寸、布局常量均已过期**。
+> 当前视觉真源为：`DESIGN.md`（v3.0 C 版「块面派」）+ `../src/styles/design-tokens.css`。
+> 差异要点：暖纸 `#FAFAF9` → 冷白 `#FCFCFD`；强调色 Teal `#0D9488` → 焦点蓝 `#2563EB`；AppBar 44→40 / StatusBar 28→26 / Sidebar 240→232；内容区 max 720 → preview 880 / editor 920。
+> 下文 §2 色彩、§4 组件尺寸、§5 布局常量**请勿作为实现依据**，仅供历史追溯。
+
 > 生成日期：2026-08-15 | 设计师：颜好看 | 基于：PRD v1.0 + SPEC.md + UIUX.md（Phase 2 锁定）
 > 设计寄存器：Product Register（工具类应用） | 三轴刻度：Variance=4 / Motion=4 / Density=5
 > 机器可读源：`../src/styles/design-tokens.json` + `design-tokens.css`（唯一真源，本文件为人类可读契约）

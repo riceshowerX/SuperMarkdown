@@ -58,7 +58,8 @@ export const SHORTCUTS: ShortcutDef[] = [
   { id: 'task', command: 'task', label: '任务列表', description: '当前行设为任务列表', keys: ['meta', 'shift', 'r'], display: combo(['meta', 'shift', 'r']), group: '编辑' },
 
   // ── 视图 ──
-  { id: 'theme', label: '切换主题', description: '明暗主题切换', keys: ['meta', 'shift', 't'], display: combo(['meta', 'shift', 't']), group: '视图' },
+  // SM-07：非 Mac 下 ⌘⇧T 与 Ctrl+Shift+T（打字机）冲突，主题快捷键仅 Mac 可用，display 随平台区分
+  { id: 'theme', label: '切换主题', description: '明暗主题切换（快捷键仅 Mac）', keys: ['meta', 'shift', 't'], display: isMac() ? combo(['meta', 'shift', 't']) : '⌘⇧T（仅 Mac）', group: '视图' },
   { id: 'typewriter', label: '打字机模式', description: '光标行居中滚动', keys: ['ctrl', 'shift', 't'], display: 'Ctrl+Shift+T', group: '视图' },
   { id: 'view-cycle', label: '循环视图', description: '分屏 / 仅编辑 / 仅预览', keys: ['meta', '\\'], display: combo(['meta', '\\']), group: '视图' },
 

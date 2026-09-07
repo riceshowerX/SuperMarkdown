@@ -19,7 +19,7 @@ export default function Toasts() {
 
   return (
     <div
-      className={`pointer-events-none fixed z-toast flex w-80 max-w-[calc(100vw-2rem)] flex-col gap-2 ${
+      className={`pointer-events-none fixed z-toast flex w-80 max-w-[calc(100vw-2rem)] max-h-[60dvh] flex-col gap-2 overflow-y-auto ${
         isMobile ? 'left-1/2 top-16 -translate-x-1/2' : 'bottom-10 right-4'
       }`}
     >

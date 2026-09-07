@@ -19,13 +19,15 @@ export default function App() {
     void initialize();
   }, [initialize]);
 
-  // 切换/加载当前文档内容（加载失败保持旧内容，不抛错）
+  // 切换/加载当前文档内容（SM-06：文档不存在时清空编辑器，不静默保留旧内容）
   useEffect(() => {
     if (!activeDocId) return;
     const documents = useDocumentsStore.getState().documents;
     const doc = documents.find((d) => d.id === activeDocId);
     if (doc) {
       useEditorStore.getState().loadDocument(doc);
+    } else {
+      useEditorStore.getState().clearDocument();
     }
   }, [activeDocId]);
 

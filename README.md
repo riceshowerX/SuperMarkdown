@@ -8,6 +8,8 @@
 
 <p>
   <a href="https://github.com/riceshowerX/SuperMarkdown/blob/main/LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-green.svg" /></a>
+  <a href="https://github.com/riceshowerX/SuperMarkdown/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/riceshowerX/SuperMarkdown/actions/workflows/ci.yml/badge.svg" /></a>
+  <img alt="Node" src="https://img.shields.io/badge/node-%E2%89%A522.12-339933.svg" />
   <img alt="React 19" src="https://img.shields.io/badge/React-19-61DAFB.svg" />
   <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5.8-3178C6.svg" />
   <img alt="Vite 7" src="https://img.shields.io/badge/Vite-7-646CFF.svg" />
@@ -196,7 +198,8 @@ SuperMarkdown/
 ## 质量保证
 
 - **测试覆盖**：108+ 用例全绿，含 XSS 深度回归（`javascript:` 链接 / 双重编码注入 / data URL 拒载）、自动保存竞态、图片 5MB 边界、删除切换相邻文档、存储降级往返
-- **QA 独立验收**：18 条 EARS 验收标准全部通过（P0 缺陷归零）
+- **全面代码审查（2026-09）**：四维审查（缺陷 / 安全 / 性能 / 架构）识别 78 项问题，完成 54 项修复——含 4 项 P0 数据竞态（切文档静默丢稿、删除与在途保存并发等）与一轮 Electron 安全加固（导航默认拒绝、CSP 响应头、IPC 导入上限、权限全量拒绝）；审查与修复报告见 `docs/review/`
+- **CI**：推送与 PR 自动执行类型检查 + 单元测试 + 生产构建
 - **P0 合规**：无 emoji 图标（全 lucide-react SVG）、无紫粉渐变、无空洞占位文案、无硬编码色值
 
 ---
@@ -205,20 +208,23 @@ SuperMarkdown/
 
 | 版本 | 阶段 | 规划 |
 |------|------|------|
-| **v1.1** | 打磨期 | 触控 44px 收尾 · 构建 code-split · 分屏滚动同步 · 快捷键面板 · 导入 .md |
-| **v1.2** | 桌面双形态 | Electron 38 封装（NSIS 安装包 / 便携版，已完成）· 打开本地 .md（已完成）· 导出 PDF · 自动更新 |
+| **v1.1** | 打磨期（已完成） | 触控 44px · 分屏滚动同步 · 快捷键面板 · 导入 .md |
+| **v1.2** | 桌面双形态（已完成） | Electron 38 封装（NSIS 安装包 / 便携版）· 打开本地 .md · 安全加固 + 全面代码审查（54 项修复） |
+| **v1.3** | 工程化 | 命令注册表收敛 · 架构解耦重构 · 首屏懒加载分包 · 测试基建（fake-indexeddb）· ESLint 基线 |
 | **v2.0** | 扩展期 | Tauri 2 瘦身（<10MB）· 移动端 PWA · 云同步（评估）· 主题/插件 |
+
+> 完整变更记录见 [CHANGELOG.md](CHANGELOG.md)。
 
 ---
 
-## 贡献指南
+## 贡献
 
-1. Fork 本仓库并创建功能分支（`git checkout -b feat/xxx`）
-2. 提交变更（`git commit -am 'feat: add xxx'`）
-3. 推送分支（`git push origin feat/xxx`）
-4. 发起 Pull Request
+欢迎 Issue 与 PR：
 
-开发前请阅读 `docs/design/DESIGN.md`（设计规范）与架构约定；所有提交需通过 `npm run test` + `npm run build`。
+- **提交流程、架构约定、自检清单**：见 [CONTRIBUTING.md](CONTRIBUTING.md)
+- **安全漏洞**：请勿公开 Issue，走 [SECURITY.md](SECURITY.md) 的私密上报通道
+- **使用答疑**：到 [Discussions](https://github.com/riceshowerX/SuperMarkdown/discussions) 提问
+- 开发前建议阅读 `docs/design/DESIGN.md`（视觉真源）与架构约定；所有提交需通过 `npm run typecheck` + `npm run test` + `npm run build`
 
 ---
 

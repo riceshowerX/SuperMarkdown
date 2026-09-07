@@ -19,6 +19,16 @@ export function unregisterEditorActions(): void {
   insertAtCursor = null;
 }
 
+/** 编辑器是否已挂载并注册（SM-18）：调用方可在执行命令前探测，避免空转 */
+export function isEditorReady(): boolean {
+  return applyCommand !== null && insertAtCursor !== null;
+}
+
+/** 重置总线（SM-18）：显式清理注册，等价于 unregisterEditorActions 的语义化别名 */
+export function resetEditorBus(): void {
+  unregisterEditorActions();
+}
+
 /** 执行格式命令；无编辑器实例（如仅预览视图）返回 false */
 export function runEditorCommand(cmd: EditorCommand): boolean {
   if (!applyCommand) return false;

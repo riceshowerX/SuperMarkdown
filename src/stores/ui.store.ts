@@ -81,8 +81,12 @@ export const useUiStore = create<UiState>()((set, get) => ({
 
   toasts: [],
   pushToast: (toast) => {
+    const current = get().toasts;
+    // SM-08：同 title+message 去重，避免重复提示刷屏
+    if (current.some((t) => t.title === toast.title && t.message === toast.message)) return;
     const id = ++toastSeq;
-    set({ toasts: [...get().toasts, { ...toast, id }] });
+    // SM-08：最多同时保留 4 条，超出丢弃最早的
+    set({ toasts: [...current, { ...toast, id }].slice(-4) });
     // 自动消失由 ToastCard 持有（支持 hover 暂停）；error 常驻不自动消失
   },
   dismissToast: (id) => set({ toasts: get().toasts.filter((t) => t.id !== id) }),

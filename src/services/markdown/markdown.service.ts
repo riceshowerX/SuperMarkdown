@@ -33,8 +33,9 @@ export function renderMarkdown(markdown: string): RenderResult {
   try {
     const raw = getMarkdownIt().render(markdown);
     const clean = DOMPurify.sanitize(raw, sanitizeConfig);
-    const headings = extractHeadings(markdown);
-    return { html: clean, headings, error: null };
+    // SM-65：headings 无生产消费方（标题派生走 utils/title.ts:deriveTitle），
+    // 不再做每次渲染的 O(n) 全量扫描；extractHeadings 函数保留供测试/未来 TOC 使用
+    return { html: clean, headings: [], error: null };
   } catch (err) {
     const message = err instanceof Error ? err.message : '未知渲染错误';
     return {

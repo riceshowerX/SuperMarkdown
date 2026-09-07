@@ -44,6 +44,15 @@ export default function TextareaEditor({ textareaRef, insertAtCursor }: Textarea
     updateScroll();
   }, [content, updateCursorLine, updateScroll]);
 
+  // SM-28/76：切换文档时选区归零，避免沿用上一篇文档的光标位置
+  useEffect(() => {
+    const ta = textareaRef.current;
+    if (!ta) return;
+    ta.setSelectionRange(0, 0);
+    updateCursorLine();
+    updateScroll();
+  }, [docId, textareaRef, updateCursorLine, updateScroll]);
+
   // 打字机模式：光标所在行滚动到视口垂直中心（Ctrl+Shift+T 开关）
   useEffect(() => {
     if (!typewriterMode) return;
@@ -83,6 +92,9 @@ export default function TextareaEditor({ textareaRef, insertAtCursor }: Textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}
           onSelect={updateCursorLine}
+          onKeyUp={updateCursorLine}
+          onClick={updateCursorLine}
+          onFocus={updateCursorLine}
           onScroll={updateScroll}
           onPaste={onPaste}
           onDrop={onDrop}

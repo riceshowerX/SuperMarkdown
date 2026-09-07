@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AlertCircle, CheckCircle2, CloudUpload, TriangleAlert } from 'lucide-react';
 import { useUiStore } from '../../stores/ui.store';
 
@@ -8,9 +8,18 @@ export default function ConfirmModal() {
   const closeConfirm = useUiStore((s) => s.closeConfirm);
   const cancelRef = useRef<HTMLButtonElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
+  // SM-45/71：确认动作执行中禁用按钮，防止重复提交
+  const [busy, setBusy] = useState(false);
+  // SM-71：记录打开前的焦点元素，关闭时恢复
+  const prevFocusRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
-    if (!confirm) return;
+    if (!confirm) {
+      setBusy(false);
+      return;
+    }
+    setBusy(false);
+    prevFocusRef.current = document.activeElement as HTMLElement | null;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         closeConfirm();
@@ -37,7 +46,12 @@ export default function ConfirmModal() {
     };
     window.addEventListener('keydown', onKey);
     cancelRef.current?.focus();
-    return () => window.removeEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      const prev = prevFocusRef.current;
+      if (prev && typeof prev.focus === 'function') prev.focus();
+      prevFocusRef.current = null;
+    };
   }, [confirm, closeConfirm]);
 
   if (!confirm) return null;
@@ -69,28 +83,33 @@ export default function ConfirmModal() {
           <button
             ref={cancelRef}
             type="button"
+            disabled={busy}
             onClick={closeConfirm}
-            className="inline-flex h-11 items-center rounded-md px-3 tx-sm wt-medium text-fg transition-colors duration-150 hover:bg-surface-warm md:h-9"
+            className="inline-flex h-11 items-center rounded-md px-3 tx-sm wt-medium text-fg transition-colors duration-150 hover:bg-surface-warm disabled:opacity-50 md:h-9"
           >
             {confirm.cancelLabel ?? '取消'}
           </button>
           <button
             type="button"
+            disabled={busy}
             onClick={() => {
               void (async () => {
+                setBusy(true);
                 try {
                   await confirm.onConfirm();
                   closeConfirm();
                 } catch {
                   closeConfirm();
+                } finally {
+                  setBusy(false);
                 }
               })();
             }}
             className={`inline-flex h-11 items-center rounded-md px-4 tx-sm wt-medium text-white transition-colors duration-150 md:h-9 ${
               confirm.danger ? 'bg-danger hover:opacity-90' : 'bg-accent hover:bg-accent-hover'
-            }`}
+            } disabled:pointer-events-none disabled:opacity-50`}
           >
-            {confirm.confirmLabel ?? '确认'}
+            {busy ? '处理中…' : confirm.confirmLabel ?? '确认'}
           </button>
         </div>
       </div>

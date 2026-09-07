@@ -23,11 +23,11 @@ import { useEditorStore } from '../../stores/editor.store';
 import { useUiStore } from '../../stores/ui.store';
 import { getCommandShortcut } from '../../config/shortcuts';
 import {
-  extractImage,
   buildMarkdownImage,
   getImageWarnMessage,
   ImageTooLargeError,
 } from '../../services/clipboard/clipboard.service';
+import { extractImageWithBudget } from '../../hooks/usePasteImage';
 import { toAppError } from '../../utils/errors';
 
 interface FormatToolbarProps {
@@ -208,7 +208,8 @@ export default function FormatToolbar({ floating = false, compact = false, appba
           e.target.value = '';
           if (!file) return;
           try {
-            const dataUrl = await extractImage(file);
+            // SM-10 调用点：统一走带「已用量预算」的提取入口
+            const dataUrl = await extractImageWithBudget(file);
             onInsertImage(buildMarkdownImage(dataUrl));
             const warning = getImageWarnMessage(file.size);
             useUiStore.getState().pushToast({ kind: warning ? 'info' : 'success', title: '图片已插入', message: warning ?? undefined });

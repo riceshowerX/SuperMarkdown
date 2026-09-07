@@ -59,6 +59,16 @@ export function recordRecent(id: string, title: string): void {
   writeRecent([{ id, title }, ...readRecent().filter((r) => r.id !== id)]);
 }
 
+/** SM-06：按文档 id 移除「最近使用」记录（删除文档后调用，避免残留失效入口与已删标题明文） */
+export function removeRecent(id: string): void {
+  const next = readRecent().filter((r) => r.id !== id);
+  try {
+    localStorage.setItem(RECENT_KEY, JSON.stringify(next.slice(0, MAX_RECENT)));
+  } catch {
+    /* 忽略 */
+  }
+}
+
 export interface BuildItemsDeps {
   query: string;
   documents: Document[];

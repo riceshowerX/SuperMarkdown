@@ -13,7 +13,8 @@ import DOMPurify from 'dompurify';
  * `<style>`/`style` 只可能来自受信插件（KaTeX/Mermaid strict 模式），不构成用户侧注入面。
  * - FORBID_TAGS：script/iframe/object/embed/form 全局禁用；input 仅放行任务列表复选框（见 hook）
  * - FORBID_ATTR：srcdoc/onerror/onload 禁用；on* 事件属性 DOMPurify 默认已拦截
- * - ALLOWED_URI_REGEXP：仅 http(s)/mailto/data:image/相对地址/片段(#)，禁 javascript: 等
+ * - ALLOWED_URI_REGEXP：仅 http(s)/mailto/data:image 位图(png/jpeg/gif/webp/avif)/相对地址/片段(#)，
+ *   禁 javascript:/vbscript:/data:image/svg+xml 等（SM-37）
  */
 
 /* ── MathML（KaTeX 输出）+ SVG（Mermaid 输出）标签白名单 ── */
@@ -22,9 +23,10 @@ const MATHML_TAGS = [
   'mspace', 'mtable', 'mtr', 'mtd', 'munder', 'mover', 'munderover', 'mstyle',
   'menclose', 'merror', 'mfenced', 'msqrt', 'mroot', 'annotation', 'semantics',
 ];
+/* SM-35：不含 foreignObject——mermaid strict 模式不产出，且它是 HTML-in-SVG 的注入面 */
 const SVG_TAGS = [
   'svg', 'g', 'path', 'circle', 'rect', 'line', 'text', 'polygon', 'polyline',
-  'ellipse', 'defs', 'marker', 'foreignObject', 'tspan', 'use', 'clipPath',
+  'ellipse', 'defs', 'marker', 'tspan', 'use', 'clipPath',
   'linearGradient', 'radialGradient', 'stop', 'filter', 'title', 'desc', 'pattern',
 ];
 
@@ -51,7 +53,9 @@ const EXT_ATTR = [
 ];
 
 const FORBID_ATTR = ['srcdoc', 'onerror', 'onload'];
-const ALLOWED_URI_REGEXP = /^(?:(?:(?:https?|mailto):|data:image\/)|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i;
+/* SM-37：data: 收窄为位图 MIME（不允许 svg+xml 等——后者在部分上下文有历史绕过面） */
+const ALLOWED_URI_REGEXP =
+  /^(?:(?:(?:https?|mailto):|data:image\/(?:png|jpe?g|gif|webp|avif);)|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i;
 
 const BASE_PROFILES = { html: true, mathMl: true, svg: true, svgFilters: true } as const;
 
@@ -84,7 +88,8 @@ export function installSanitizeHooks(): void {
 
   DOMPurify.addHook('uponSanitizeElement', (node) => {
     const el = node as Element;
-    if (el.tagName === 'INPUT') {
+    // 大小写无关比较（HTML 元素 tagName 大写、SVG 元素小写）
+    if (el.tagName?.toLowerCase() === 'input') {
       // 仅允许任务列表复选框；其余任意 input 一律删除
       if (el.getAttribute('type') !== 'checkbox') {
         el.parentNode?.removeChild(el);
@@ -93,14 +98,22 @@ export function installSanitizeHooks(): void {
   });
 
   DOMPurify.addHook('afterSanitizeAttributes', (node) => {
+    const el = node as Element;
+    const tag = el.tagName?.toLowerCase() ?? '';
     // 任务列表复选框强制只读（markdown-it-task-lists 不输出 disabled）
-    if (node.tagName === 'INPUT' && node.getAttribute('type') === 'checkbox') {
-      node.setAttribute('disabled', '');
+    if (tag === 'input' && el.getAttribute('type') === 'checkbox') {
+      el.setAttribute('disabled', '');
     }
-    if (node.tagName === 'A' && node.hasAttribute('href')) {
-      const href = node.getAttribute('href') ?? '';
-      if (/^javascript:/i.test(href.trim())) {
-        node.removeAttribute('href');
+    // SM-59：锚点兜底覆盖 HTML <a>('A') 与 SVG <a>('a')——统一小写比较
+    if (tag === 'a') {
+      const href = `${el.getAttribute('href') ?? ''}${el.getAttribute('xlink:href') ?? ''}`.trim();
+      if (/^(javascript|vbscript|data):/i.test(href)) {
+        el.removeAttribute('href');
+        el.removeAttribute('xlink:href');
+      }
+      // 反向 tabnabbing 加固：带 href 的链接强制 rel
+      if (el.hasAttribute('href')) {
+        el.setAttribute('rel', 'noopener noreferrer nofollow');
       }
     }
   });

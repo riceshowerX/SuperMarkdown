@@ -12,6 +12,9 @@ import type { Document } from '../types/models';
 
 vi.mock('../services/storage/storage.service', () => ({
   getStorageService: vi.fn(),
+  // SM-09 新增：崩溃缓冲读写在 store 中被引用，测试桩需同步提供
+  readCrashBuffer: vi.fn(() => null),
+  clearCrashBuffer: vi.fn(),
 }));
 
 function makeDoc(id = 'd1', content = ''): Document {

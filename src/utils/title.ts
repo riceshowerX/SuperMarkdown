@@ -1,8 +1,10 @@
 /** 文档标题派生（Spec §6.1：首行标题或"无标题文档 N"） */
 
-/** 从内容提取首个标题文本（# 之后），无标题返回空串 */
+/** 从内容提取首个标题文本（# 之后），无标题返回空串
+ *  SM-12：先剥离代码围栏，避免代码块内的 `# 注释` 行被误判为文档标题 */
 export function deriveTitle(content: string): string {
-  const firstLine = content.split('\n').find((line) => /^#{1,6}\s+\S/.test(line));
+  const prose = content.replace(/^```[\s\S]*?^```/gm, '');
+  const firstLine = prose.split('\n').find((line) => /^#{1,6}\s+\S/.test(line));
   if (!firstLine) return '';
   return firstLine.replace(/^#{1,6}\s+/, '').trim();
 }

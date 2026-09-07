@@ -35,10 +35,15 @@ export function insertText(value: string, selStart: number, selEnd: number, text
   return { value: newValue, start: cursor, end: cursor };
 }
 
-/** 光标所在行号（0 起；纯函数，供光标行高亮/打字机模式） */
+/** 光标所在行号（0 起；纯函数，供光标行高亮/打字机模式）
+ *  SM-16：改为逐字符扫描计数换行符——不创建 split 数组（大文档下避免每次击键 O(n) 的数组分配）。 */
 export function computeActiveLine(value: string, selectionStart: number): number {
   const safe = Math.max(0, Math.min(selectionStart, value.length));
-  return value.slice(0, safe).split('\n').length - 1;
+  let line = 0;
+  for (let i = 0; i < safe; i++) {
+    if (value.charCodeAt(i) === 10 /* \n */) line++;
+  }
+  return line;
 }
 
 /** 包裹选区 */

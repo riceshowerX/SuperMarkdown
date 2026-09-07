@@ -6,6 +6,9 @@
   "description": "打开即写、图片自包含、数据留在本地的所见即所得 Markdown 编辑器",
   "license": "MIT",
   "author": "riceshowerX",
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",

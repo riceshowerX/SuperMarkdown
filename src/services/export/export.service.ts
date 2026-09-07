@@ -1,27 +1,63 @@
 import type { Document } from '../../types/models';
 import { AppError } from '../../utils/errors';
+import { escapeHtml } from '../../utils/html';
 import { downloadBlob, buildExportFileName } from '../../utils/file';
 import { renderMarkdown } from '../markdown/markdown.service';
 import tokensCss from '../../styles/design-tokens.css?raw';
 import previewCss from '../../styles/preview.css?raw';
 import katexCss from 'katex/dist/katex.min.css?raw';
 
-/** 表格分隔行：仅含 |、-、:、空格，且以 | 开头（区别于普通分隔线 ---） */
-const TABLE_SEPARATOR_RE = /^\s*\|[\s:|-]*\|\s*$/gm;
+/** 表格分隔行：仅含 |、-、:、空格/Tab，且以 | 开头（区别于普通分隔线 ---）
+ *  SM-51：\s 收窄为 [ \t]，避免把含换行的内容误判进单行匹配 */
+const TABLE_SEPARATOR_RE = /^[ \t]*\|[ \t:|-]*\|[ \t]*$/gm;
 
 const CODE_PLACEHOLDER_RE = /\u0000SM_CODE_(\d+)\u0000/g;
 
 /**
+ * 线性扫描抽取 ``` 围栏块（SM-68）：替代 `[\s\S]*?` 跨行正则——
+ * 后者对大量未闭合围栏的输入存在 O(n²) 回溯（导出纯文本时可被卡死），本实现严格 O(n)。
+ * 未闭合的起始围栏原样保留，不当作代码块。
+ */
+function extractFencedCode(markdown: string): { text: string; blocks: string[] } {
+  const blocks: string[] = [];
+  let out = '';
+  let i = 0;
+  const n = markdown.length;
+  while (i < n) {
+    const fence = markdown.indexOf('```', i);
+    if (fence === -1) {
+      out += markdown.slice(i);
+      break;
+    }
+    const langEnd = markdown.indexOf('\n', fence);
+    if (langEnd === -1) {
+      out += markdown.slice(i); // 起始围栏后无换行：无内容块
+      break;
+    }
+    const close = markdown.indexOf('```', langEnd + 1);
+    if (close === -1) {
+      out += markdown.slice(i); // 未闭合：原样保留
+      break;
+    }
+    // 内容区间 [langEnd+1, close)，去掉紧贴闭合围栏前的换行（与原正则 \n?``` 语义一致）
+    let contentEnd = close;
+    if (contentEnd > langEnd + 1 && markdown.charCodeAt(contentEnd - 1) === 10) contentEnd--;
+    blocks.push(markdown.slice(langEnd + 1, contentEnd));
+    out += markdown.slice(i, fence);
+    out += `\u0000SM_CODE_${blocks.length - 1}\u0000`;
+    const afterClose = markdown.indexOf('\n', close + 3);
+    i = afterClose === -1 ? n : afterClose + 1;
+  }
+  return { text: out, blocks };
+}
+
+/**
  * Markdown 语法去除（纯函数，供测试）
- * 代码围栏先整体抽出 → 仅清洗普通文本 → 原样还原代码内容，避免破坏代码块。
+ * 代码围栏先整体抽出（线性扫描）→ 仅清洗普通文本 → 原样还原代码内容，避免破坏代码块。
  */
 export function markdownToPlainText(markdown: string): string {
   // 1) 抽出代码围栏内容，替换为单行占位符
-  const codeBlocks: string[] = [];
-  const withoutCode = markdown.replace(/```[^\n]*\n?([\s\S]*?)\n?```/g, (_match, content: string) => {
-    codeBlocks.push(content);
-    return `\u0000SM_CODE_${codeBlocks.length - 1}\u0000`;
-  });
+  const { text: withoutCode, blocks: codeBlocks } = extractFencedCode(markdown);
 
   // 2) 仅对普通文本做语法清洗
   let text = withoutCode
@@ -90,6 +126,11 @@ export function buildExportHtml(options: {
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="color-scheme" content="light" />
+<!-- SM-36：导出文件自带 CSP——禁一切外联（防跟踪/外泄），仅放行内嵌 data 图片、内联样式与主题切换脚本 -->
+<meta
+  http-equiv="Content-Security-Policy"
+  content="default-src 'none'; img-src data:; style-src 'unsafe-inline'; font-src data:; script-src 'unsafe-inline'; object-src 'none'; base-uri 'none'"
+/>
 <title>${escapeHtml(title)}</title>
 <style>
 ${tokens}
@@ -114,10 +155,6 @@ ${katex}
 <script>${toggleScript}</script>
 </body>
 </html>`;
-}
-
-function escapeHtml(str: string): string {
-  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
 /**

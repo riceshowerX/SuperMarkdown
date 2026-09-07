@@ -4,19 +4,25 @@
  * 职责：
  * - 创建 BrowserWindow 并加载 dist/index.html（纯静态，离线可用）
  * - 强制安全基线：contextIsolation / sandbox / webSecurity，渲染进程零 Node 权限
- * - 外链拦截：setWindowOpenHandler + will-navigate 一律走系统浏览器
+ * - 外链拦截：setWindowOpenHandler + will-navigate（默认拒绝，SM-58）一律走系统浏览器
  * - 唯一原生能力：open-local-markdown（dialog + fs 读取，经 preload 白名单暴露）
  *
- * 安全要点（§12.3 逐项落实）：
+ * 安全要点（§12.3 + 批次 1 加固逐项落实）：
  * 1. 渲染进程无 Node 权限：nodeIntegration:false + sandbox:true + contextIsolation:true
  * 2. 所有原生能力经 preload 白名单 IPC（contextBridge 最小暴露）
  * 3. 禁用 webview 标签：webviewTag:false
  * 4. 本地内容走 file://，不启用 http://localhost 远程加载
- * 5. CSP 随 index.html 在 Electron 中同样生效
+ * 5. CSP 双防线：index.html meta（SM-32 补充响应头注入）
+ * 6. 运行时权限全量拒绝（SM-61：setPermissionRequestHandler / setPermissionCheckHandler）
+ * 7. 本地文件导入：20MB 上限 + 二进制嗅探 + 移除「所有文件」过滤器 + 错误信息脱敏（SM-33）
  */
-const { app, BrowserWindow, dialog, ipcMain, shell } = require('electron');
+const { app, BrowserWindow, dialog, ipcMain, session, shell } = require('electron');
 const path = require('node:path');
 const fs = require('node:fs/promises');
+const nodeFs = require('node:fs');
+
+/** 导入文件硬上限（SM-33）：防止超大文件拖垮主进程与 IndexedDB 配额 */
+const MAX_IMPORT_BYTES = 20 * 1024 * 1024;
 
 /** 仅放行 http/https/mailto 外链，其余（file: 内导航、javascript: 等）一律拒绝 */
 function isSafeExternal(url) {
@@ -28,17 +34,37 @@ function isSafeExternal(url) {
   }
 }
 
-/** 阻止渲染进程导航到应用之外；同源 file:// 内的 hash 跳转不拦截 */
+/**
+ * 阻止渲染进程导航到应用之外（SM-58：默认拒绝语义）。
+ * 先 preventDefault，再仅对「同一 file: 文件内的跳转」（锚点/刷新）经 loadURL 放行；
+ * URL 解析失败一律维持拒绝——绝不因异常路径绕过守卫。
+ * 防递归：loadURL 本身会再次触发 will-navigate，同一目标 URL 短窗口内只放行一次。
+ */
 function attachNavigationGuard(win) {
+  let lastAllowedNav = { url: '', at: 0 };
+
   win.webContents.on('will-navigate', (event, url) => {
-    const current = win.webContents.getURL();
-    if (url === current) return; // 同页刷新
-    const currentUrl = new URL(current);
-    const targetUrl = new URL(url);
-    const sameFile = currentUrl.protocol === 'file:' && targetUrl.protocol === 'file:' && targetUrl.pathname === currentUrl.pathname;
-    if (sameFile) return; // 文件内锚点跳转
-    event.preventDefault();
-    if (isSafeExternal(url)) void shell.openExternal(url);
+    event.preventDefault(); // 默认拒绝：任何未显式放行的导航都被拦截
+    try {
+      const currentUrl = new URL(win.webContents.getURL());
+      const targetUrl = new URL(url);
+      const sameFile =
+        currentUrl.protocol === 'file:' &&
+        targetUrl.protocol === 'file:' &&
+        targetUrl.pathname === currentUrl.pathname;
+      if (!sameFile) return; // 保持拒绝
+      if (isSafeExternal(url)) {
+        void shell.openExternal(url);
+        return;
+      }
+      // 防递归：500ms 内同一目标的重复导航事件不再转 loadURL
+      const now = Date.now();
+      if (lastAllowedNav.url === url && now - lastAllowedNav.at < 500) return;
+      lastAllowedNav = { url, at: now };
+      void win.loadURL(url); // 同一文件内的锚点跳转 / 刷新放行
+    } catch {
+      /* URL 解析失败 → 维持拒绝 */
+    }
   });
 
   // 新窗口请求（target=_blank / window.open）一律拒绝并转系统浏览器
@@ -46,6 +72,31 @@ function attachNavigationGuard(win) {
     if (isSafeExternal(url)) void shell.openExternal(url);
     return { action: 'deny' };
   });
+}
+
+/** SM-32：响应头注入 CSP（与 index.html 的 meta CSP 互为冗余防线） */
+function attachCspHeader() {
+  const policy =
+    "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; " +
+    "img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'; " +
+    "object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'";
+  session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+    callback({
+      responseHeaders: {
+        ...details.responseHeaders,
+        'Content-Security-Policy': [policy],
+      },
+    });
+  });
+}
+
+/** SM-61：全量拒绝渲染进程的运行时权限请求（摄像头/麦克风/地理位置/通知等） */
+function attachPermissionGuards() {
+  session.defaultSession.setPermissionRequestHandler((_wc, permission, callback) => {
+    console.warn('[SuperMarkdown] denied permission request:', permission);
+    callback(false);
+  });
+  session.defaultSession.setPermissionCheckHandler(() => false);
 }
 
 function createWindow() {
@@ -73,13 +124,28 @@ function createWindow() {
   // 渲染就绪再显示，避免白屏闪烁
   win.once('ready-to-show', () => win.show());
 
+  // SM-27：构建产物缺失时给出明确错误，而非白屏
+  const distIndex = path.join(__dirname, '..', 'dist', 'index.html');
+  if (!nodeFs.existsSync(distIndex)) {
+    dialog.showErrorBox(
+      'SuperMarkdown',
+      '未找到前端构建产物（dist/index.html）。\n请先执行 npm run build 后再启动桌面端。',
+    );
+    app.quit();
+    return win;
+  }
+
   // 生产模式：加载构建产物（file:// 协议，CSP 生效）
-  win.loadFile(path.join(__dirname, '..', 'dist', 'index.html'));
+  void win.loadFile(distIndex);
 
   return win;
 }
 
-/** 打开本地 .md：dialog 选文件 → fs 读内容 → 返回 {title, content}；取消返回 null */
+/**
+ * 打开本地 .md：dialog 选文件 → fs 读取 → 返回 {title, content}；取消返回 null
+ * SM-33：20MB 上限、二进制嗅探（\u0000 拒绝）、移除「所有文件」过滤器、
+ * 错误信息脱敏——不把含绝对路径的 err.message 回传渲染进程。
+ */
 async function handleOpenLocalMarkdown() {
   const win = BrowserWindow.getFocusedWindow() ?? BrowserWindow.getAllWindows()[0];
   const result = await dialog.showOpenDialog(win, {
@@ -88,20 +154,35 @@ async function handleOpenLocalMarkdown() {
     properties: ['openFile'],
     filters: [
       { name: 'Markdown 文档', extensions: ['md', 'markdown', 'mdown', 'mkd', 'txt'] },
-      { name: '所有文件', extensions: ['*'] },
     ],
   });
   if (result.canceled || result.filePaths.length === 0) return null;
 
   const filePath = result.filePaths[0];
   try {
+    const stat = await fs.stat(filePath);
+    if (!stat.isFile()) throw new Error('SM_NOT_A_FILE');
+    if (stat.size > MAX_IMPORT_BYTES) throw new Error('SM_TOO_LARGE');
+
     const content = await fs.readFile(filePath, 'utf8');
+    if (content.includes('\u0000')) throw new Error('SM_BINARY'); // 二进制嗅探
+
     const base = path.basename(filePath);
     const title = base.replace(/\.[^.]+$/, '') || base;
     return { title, content };
   } catch (err) {
-    console.error('[SuperMarkdown] read local markdown failed:', err);
-    throw new Error(`读取文件失败：${err.message}`);
+    console.error('[SuperMarkdown] read local markdown failed:', err && err.code);
+    const msg = err instanceof Error ? err.message : '';
+    if (msg === 'SM_TOO_LARGE') {
+      throw new Error(`文件超过 ${MAX_IMPORT_BYTES / 1024 / 1024}MB 上限，已拒绝打开`);
+    }
+    if (msg === 'SM_BINARY') {
+      throw new Error('文件似乎是二进制格式，已拒绝打开');
+    }
+    if (msg === 'SM_NOT_A_FILE') {
+      throw new Error('所选路径不是文件');
+    }
+    throw new Error('读取文件失败，请确认文件可访问且不超过 20MB');
   }
 }
 
@@ -119,6 +200,8 @@ if (!gotLock) {
   });
 
   app.whenReady().then(() => {
+    attachPermissionGuards(); // SM-61
+    attachCspHeader();        // SM-32
     ipcMain.handle('open-local-markdown', handleOpenLocalMarkdown);
     createWindow();
 

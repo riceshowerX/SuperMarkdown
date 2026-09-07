@@ -28,7 +28,8 @@ export default function PreviewPane() {
         </div>
       ) : (
         <PreviewErrorBoundary key={docId ?? 'none'}>
-          <div ref={containerRef} className="markdown-body" dangerouslySetInnerHTML={{ __html: result.html }} />
+          {/* data-doc-id：供导出流程（app/actions.ts SM-74）校验 DOM 快照归属的文档 */}
+          <div ref={containerRef} className="markdown-body" data-doc-id={docId ?? undefined} dangerouslySetInnerHTML={{ __html: result.html }} />
         </PreviewErrorBoundary>
       )}
     </section>
