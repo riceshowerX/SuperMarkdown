@@ -78,7 +78,7 @@
 
 ## 快速开始
 
-> 只想使用？到 [Releases](https://github.com/riceshowerX/SuperMarkdown/releases) 下载 Windows 安装包即可，无需 Node 环境。
+> 获取最新版本：见 [Releases](https://github.com/riceshowerX/SuperMarkdown/releases)。
 
 环境要求：**Node.js ≥ 22.12**（已在 v22.22.2 验证）
 
