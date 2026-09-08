@@ -102,7 +102,7 @@ export default function TextareaEditor({ textareaRef, insertAtCursor }: Textarea
           aria-label="Markdown 编辑区"
           aria-multiline="true"
           placeholder={docId ? '' : '打开或新建一篇文档开始写作'}
-          className="relative z-[1] sm-scroll block h-full w-full resize-none border-0 bg-transparent px-[var(--space-8)] py-[var(--space-6)] tx-editor lh-editor text-fg outline-none placeholder:text-fg-2"
+          className="relative z-[1] sm-scroll block h-full w-full resize-none border-0 bg-transparent px-4 py-[var(--space-6)] tx-editor lh-editor text-fg outline-none placeholder:text-fg-2 md:px-[var(--space-8)]"
           style={{ tabSize: 2 }}
         />
         {docId && content.trim() === '' && <EmptyHint />}

@@ -44,7 +44,7 @@ function SaveErrorBar({ onRetry }: { onRetry: () => void }) {
       <button
         type="button"
         onClick={onRetry}
-        className="inline-flex h-7 shrink-0 items-center gap-1 rounded px-2 tx-xs wt-medium text-danger transition-colors duration-150 hover:bg-danger/10"
+        className="inline-flex h-11 shrink-0 items-center gap-1 rounded px-2 tx-xs wt-medium text-danger transition-colors duration-150 hover:bg-danger/10 md:h-7"
       >
         <RotateCcw size={12} aria-hidden />
         重试

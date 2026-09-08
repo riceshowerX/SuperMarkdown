@@ -63,7 +63,8 @@ export const useUiStore = create<UiState>()((set, get) => ({
   viewMode: 'split',
   setViewMode: (mode) => set({ viewMode: mode }),
   mobileMode: 'edit',
-  setMobileMode: (mode) => set({ mobileMode: mode }),
+  // MUI-13：跨断点状态保持——移动端 写/读 与桌面 viewMode 同步（移动端无 split，不映射）
+  setMobileMode: (mode) => set({ mobileMode: mode, viewMode: mode === 'edit' ? 'edit' : 'preview' }),
 
   commandPaletteOpen: false,
   setCommandPaletteOpen: (open) => set({ commandPaletteOpen: open }),

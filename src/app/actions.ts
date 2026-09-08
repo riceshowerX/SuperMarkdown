@@ -2,7 +2,6 @@ import type { Document } from '../types/models';
 import { useDocumentsStore } from '../stores/documents.store';
 import { useEditorStore } from '../stores/editor.store';
 import { useUiStore } from '../stores/ui.store';
-import { exportHtml, exportPlainText } from '../services/export/export.service';
 import { toAppError } from '../utils/errors';
 
 /** 基于内存最新内容组装当前文档（导出需包含未保存内容） */
@@ -23,6 +22,8 @@ export async function exportCurrentDocument(kind: 'html' | 'txt'): Promise<void>
   const doc = buildCurrentDocument();
   if (!doc) return;
   try {
+    // PERF-01：export.service（含 markdown-it/katex/hljs 渲染链）按需动态加载，不进首屏 chunk
+    const { exportHtml, exportPlainText } = await import('../services/export/export.service');
     if (kind === 'html') {
       // SM-74：不信任 DOM——先落盘待保存内容，再以内存内容走「markdown-it → DOMPurify」净化渲染管线
       await useEditorStore.getState().flushSave();
@@ -49,6 +50,8 @@ export async function exportDocumentById(id: string, kind: 'html' | 'txt'): Prom
   const doc = useDocumentsStore.getState().documents.find((d) => d.id === id);
   if (!doc) return;
   try {
+    // PERF-01：同上，按需动态加载导出服务
+    const { exportHtml, exportPlainText } = await import('../services/export/export.service');
     if (kind === 'html') {
       await exportHtml(doc);
       useUiStore.getState().pushToast({ kind: 'success', title: '已导出 HTML', message: '文件已下载' });

@@ -31,7 +31,6 @@ import { extractImageWithBudget } from '../../hooks/usePasteImage';
 import { toAppError } from '../../utils/errors';
 
 interface FormatToolbarProps {
-  floating?: boolean;
   compact?: boolean;
   /** AppBar 内嵌模式：透明无边框，紧凑按钮，不占编辑区高度 */
   appbar?: boolean;
@@ -81,10 +80,10 @@ const FLAT_ITEMS: ToolItem[] = [...GROUPS.flat(), ...OVERFLOW_ITEMS];
 const COMPACT_CMDS: EditorCommand[] = ['bold', 'italic', 'h1', 'h2', 'quote', 'codeBlock'];
 
 /**
- * 格式工具栏：桌面悬浮胶囊（floating）/ 移动端底部条（compact）
+ * 格式工具栏：AppBar 内嵌（appbar）/ 移动端底部条（compact）；MUI-04 已移除无调用点的 floating 分支
  * 分组收敛 ≤11 可见 + 溢出菜单；按钮 title 含快捷键（被动学习）；图片走文件选择 → 光标处插入
  */
-export default function FormatToolbar({ floating = false, compact = false, appbar = false, onCommand, onInsertImage, onOpenShortcuts }: FormatToolbarProps) {
+export default function FormatToolbar({ compact = false, appbar = false, onCommand, onInsertImage, onOpenShortcuts }: FormatToolbarProps) {
   const hasDoc = useEditorStore((s) => s.docId !== null);
   const [moreOpen, setMoreOpen] = useState(false);
   const moreRef = useRef<HTMLDivElement>(null);
@@ -108,20 +107,14 @@ export default function FormatToolbar({ floating = false, compact = false, appba
       className={`${
         appbar
           ? 'flex items-center gap-0.5'
-          : floating
-            ? 'flex shrink-0 items-center justify-center gap-1 border-b border-border bg-surface px-2 py-1.5'
-            : 'flex h-[52px] shrink-0 items-center justify-center gap-1 border-t border-border bg-surface px-2 pb-[env(safe-area-inset-bottom)]'
+          // MUI-02：safe-area 交给最贴底的 StatusBar（AppShell DOM 顺序）；MUI-03：空间不足时横向滚动而不是挤压间距
+          : 'flex h-[52px] shrink-0 items-center justify-center gap-1 overflow-x-auto border-t border-border bg-surface px-2'
       }`}
       role="toolbar"
       aria-label="格式工具栏"
     >
-      <div
-        className={`flex items-center ${
-          floating
-            ? 'gap-0.5'
-            : 'gap-0.5'
-        }`}
-      >
+        {/* MUI-03：compact 底部条按钮间距 2px→4px，降低误触 */}
+        <div className={`flex items-center ${appbar ? 'gap-0.5' : 'gap-1'}`}>
         {visibleGroups.map((group, gi) => (
           <div key={gi} className="flex items-center gap-0.5">
             {gi > 0 && <div className="mx-1 h-4 w-px bg-border-soft" aria-hidden />}
@@ -148,7 +141,7 @@ export default function FormatToolbar({ floating = false, compact = false, appba
             disabled={!hasDoc}
             onClick={() => setMoreOpen((v) => !v)}
             className={`inline-flex items-center justify-center rounded-md text-fg-2 transition-colors duration-150 hover:bg-surface-sunken active:bg-accent-soft disabled:opacity-40 disabled:pointer-events-none ${
-              appbar ? 'h-7 w-7' : compact ? 'h-11 w-11' : 'h-[30px] w-[30px]'
+              appbar ? 'h-7 w-7' : 'h-11 w-11'
             }`}
           >
             <MoreHorizontal size={16} strokeWidth={1.8} aria-hidden />
@@ -248,7 +241,7 @@ function ToolButton({
       disabled={disabled}
       onClick={onClick}
       className={`inline-flex items-center justify-center rounded-md text-fg-2 transition-colors duration-150 hover:bg-surface-sunken active:bg-accent-soft disabled:opacity-40 disabled:pointer-events-none ${
-        compact === 'appbar' ? 'h-7 w-7' : compact ? 'h-11 w-11' : 'h-[30px] w-[30px]'
+        compact === 'appbar' ? 'h-7 w-7' : 'h-11 w-11'
       }`}
     >
       <item.icon size={16} strokeWidth={1.8} aria-hidden />

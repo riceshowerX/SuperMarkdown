@@ -1,3 +1,5 @@
+/* PERF-02：KaTeX 样式随本模块（动态 chunk）按需加载，首屏不再引入（原 main.tsx 静态引入已移除） */
+import 'katex/dist/katex.min.css';
 import DOMPurify from 'dompurify';
 import type MarkdownIt from 'markdown-it';
 import type { RenderResult } from '../../types/models';

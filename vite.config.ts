@@ -21,6 +21,18 @@ export default defineConfig({
   // 相对路径资源：兼容 Electron 壳 file:// 加载 dist/（架构 §12.2），Web 形态任选挂载路径亦可用
   base: './',
   plugins: [react(), tailwindcss(), devCspRelax()],
+  build: {
+    // PERF-01：仅固定 react 运行时归属。markdown-it/katex/highlight.js 不放入 manualChunks——
+    // 它们由 PreviewPane/actions 的动态 import 自然拆分为异步 chunk，静态登记反而会拉回首屏。
+    chunkSizeWarningLimit: 600,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom'],
+        },
+      },
+    },
+  },
   server: {
     port: 5173,
     strictPort: true,

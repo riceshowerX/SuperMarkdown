@@ -1,9 +1,10 @@
 import { useEffect } from 'react';
-import { RotateCcw } from 'lucide-react';
+import { RotateCcw, X } from 'lucide-react';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 import { useUiStore } from '../../stores/ui.store';
 import { useDocumentsStore } from '../../stores/documents.store';
 import Toolbar from '../toolbar/Toolbar';
+import IconButton from '../toolbar/IconButton';
 import Sidebar from '../sidebar/Sidebar';
 import StatusBar from '../common/StatusBar';
 import MobileShell from './MobileShell';
@@ -42,10 +43,14 @@ export default function AppShell() {
             <MobileShell />
             {mobileSidebarOpen && (
               <div className="fixed inset-0 z-modal scrim" onMouseDown={() => setMobileSidebarOpen(false)}>
+                {/* MUI-08：顶部安全区空条 + 显式关闭钮 + 入场动画；bg-bg 让安全区空条与侧栏同色 */}
                 <div
-                  className="absolute inset-y-0 left-0 w-[85vw] max-w-[320px] shadow-[var(--elev-raised)]"
+                  className="absolute inset-y-0 left-0 flex w-[85vw] max-w-[320px] animate-[drawer-in_200ms_ease-out] flex-col bg-bg pt-[env(safe-area-inset-top)] shadow-[var(--elev-raised)]"
                   onMouseDown={(e) => e.stopPropagation()}
                 >
+                  <div className="flex shrink-0 items-center justify-end border-b border-border-soft px-2 py-1">
+                    <IconButton icon={X} label="关闭文档列表" iconSize={20} onClick={() => setMobileSidebarOpen(false)} />
+                  </div>
                   <Sidebar onNavigate={() => setMobileSidebarOpen(false)} />
                 </div>
               </div>
@@ -82,7 +87,7 @@ function InitError({ message, onRetry }: { message: string; onRetry: () => void 
         <button
           type="button"
           onClick={onRetry}
-          className="mt-3 inline-flex h-9 items-center gap-1.5 rounded-md bg-accent px-3 tx-sm wt-medium text-on-accent hover:bg-accent-hover"
+          className="mt-3 inline-flex h-11 items-center gap-1.5 rounded-md bg-accent px-3 tx-sm wt-medium text-on-accent hover:bg-accent-hover md:h-9"
         >
           <RotateCcw size={14} strokeWidth={1.8} aria-hidden />
           重试

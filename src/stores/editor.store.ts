@@ -8,7 +8,6 @@ import {
 import { clearCrashBuffer, getStorageService } from '../services/storage/storage.service';
 import { nextTitle } from '../utils/title';
 import { toAppError } from '../utils/errors';
-import { exportHtml } from '../services/export/export.service';
 import { useDocumentsStore } from './documents.store';
 import { useUiStore } from './ui.store';
 
@@ -201,13 +200,16 @@ export const useEditorStore = create<EditorState>()((set, get) => ({
             message: '连续多次写入失败，建议导出备份以防丢失',
             actionLabel: '导出备份',
             onAction: () => {
-              void exportHtml({
-                id: docId,
-                title: base?.title ?? '无标题文档',
-                content: failedContent,
-                createdAt: base?.createdAt ?? Date.now(),
-                updatedAt: Date.now(),
-              });
+              // PERF-01：export.service（含 markdown 渲染链）改为按需动态加载，斩断 main chunk 静态依赖
+              void import('../services/export/export.service').then(({ exportHtml }) =>
+                exportHtml({
+                  id: docId,
+                  title: base?.title ?? '无标题文档',
+                  content: failedContent,
+                  createdAt: base?.createdAt ?? Date.now(),
+                  updatedAt: Date.now(),
+                }),
+              );
             },
           });
         }

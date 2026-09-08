@@ -22,7 +22,7 @@ export default function SearchBox() {
           type="button"
           onClick={() => setSearchQuery('')}
           aria-label="清除搜索"
-          className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded p-2.5 text-fg-2 hover:bg-surface-warm md:p-1"
+          className="absolute right-1 top-1/2 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded text-fg-2 hover:bg-surface-warm md:h-8 md:w-8 md:p-0"
         >
           <X size={14} aria-hidden />
         </button>

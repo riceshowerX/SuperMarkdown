@@ -101,7 +101,7 @@ export default function DocumentList({ onNavigate }: { onNavigate?: () => void }
             aria-haspopup="menu"
             aria-expanded={sortOpen}
             onClick={() => setSortOpen((v) => !v)}
-            className="inline-flex h-8 items-center gap-1 rounded-md px-1.5 tx-xs text-fg-2 transition-colors duration-150 hover:bg-surface-sunken hover:text-fg"
+            className="inline-flex h-11 items-center gap-1 rounded-md px-1.5 tx-xs text-fg-2 transition-colors duration-150 hover:bg-surface-sunken hover:text-fg md:h-8"
           >
             <ArrowUpDown size={12} strokeWidth={1.8} aria-hidden />
             {sortBy === 'updated' ? '最近修改' : '标题 A-Z'}

@@ -19,8 +19,10 @@ import { runEditorCommand, insertAtCursorBus } from '../../hooks/editorCommandBu
 import { exportCurrentDocument } from '../../app/actions';
 import { toAppError } from '../../utils/errors';
 import ThemeToggle from '../common/ThemeToggle';
+import Segmented, { type SegmentedOption } from '../common/Segmented';
 import IconButton from './IconButton';
 import FormatToolbar from '../editor/FormatToolbar';
+import type { ViewMode } from '../../types/models';
 
 /** 顶栏 AppBar（PAGES §2）：Logo + 标题重命名 + 格式工具栏(appbar 内嵌) + 导出 + 视图模式 + 主题 */
 export default function Toolbar() {
@@ -89,6 +91,7 @@ export default function Toolbar() {
           />
         </div>
       ) : (
+        // MUI-01：去掉 shrink-0 并限宽，长标题时 truncate 生效，右侧功能按钮不被挤出屏幕
         <button
           type="button"
           onClick={() => {
@@ -97,7 +100,7 @@ export default function Toolbar() {
             setRenaming(true);
           }}
           title="点击重命名"
-          className="flex min-h-11 min-w-0 shrink-0 items-center gap-1.5 self-stretch rounded px-1.5 text-left hover:bg-surface-warm md:min-h-9"
+          className="flex min-h-11 min-w-0 max-w-[60vw] items-center gap-1.5 self-stretch rounded px-1.5 text-left hover:bg-surface-warm md:max-w-none md:min-h-9"
         >
           <span className="tx-sm text-fg-2">工作区</span>
           <span className="text-border" aria-hidden>/</span>
@@ -125,7 +128,7 @@ export default function Toolbar() {
         onClick={() => setCommandPaletteOpen(true)}
         aria-label="打开命令面板"
         title="命令面板 ⌘K"
-        className="inline-flex h-9 items-center gap-1.5 rounded-md border border-border bg-surface-sunken px-2.5 text-fg-2 transition-colors duration-150 hover:bg-block-hover active:bg-accent-soft md:w-56 md:justify-between"
+        className="inline-flex h-11 items-center gap-1.5 rounded-md border border-border bg-surface-sunken px-2.5 text-fg-2 transition-colors duration-150 hover:bg-block-hover active:bg-accent-soft md:h-9 md:w-56 md:justify-between"
       >
         <span className="inline-flex min-w-0 items-center gap-1.5">
           <Search size={16} strokeWidth={1.8} aria-hidden />
@@ -136,29 +139,34 @@ export default function Toolbar() {
         </kbd>
       </button>
 
-      {/* 导出菜单 */}
-      {!isMobile && (
-        <div ref={exportRef} className="relative">
-          <button
-            type="button"
-            disabled={!hasContent}
-            onClick={() => setExportOpen((v) => !v)}
-            aria-haspopup="menu"
-            aria-expanded={exportOpen}
-            className="inline-flex h-9 items-center gap-1.5 rounded-md px-2.5 tx-sm text-fg-2 transition-colors duration-150 hover:bg-surface-warm active:bg-accent-soft disabled:opacity-40 disabled:pointer-events-none"
-          >
-            <Download size={18} strokeWidth={1.8} aria-hidden />
-            导出
-            <ChevronDown size={14} aria-hidden />
-          </button>
-          {exportOpen && (
-            <div role="menu" aria-label="导出" className="absolute right-0 top-full z-dropdown mt-1 w-44 rounded-md bg-surface p-1 shadow-[var(--elev-raised)]">
-              <ExportItem icon={FileCode2} label="导出 HTML" onClick={() => { setExportOpen(false); void exportCurrentDocument('html'); }} />
-              <ExportItem icon={FileText} label="导出纯文本" onClick={() => { setExportOpen(false); void exportCurrentDocument('txt'); }} />
-            </div>
+      {/* 导出菜单（MUI-10：移动端保留单个图标入口，与桌面共用同一菜单与外部点击关闭逻辑） */}
+      <div ref={exportRef} className="relative">
+        <button
+          type="button"
+          disabled={!hasContent}
+          onClick={() => setExportOpen((v) => !v)}
+          aria-haspopup="menu"
+          aria-expanded={exportOpen}
+          aria-label="导出"
+          className={`inline-flex items-center rounded-md text-fg-2 transition-colors duration-150 hover:bg-surface-warm active:bg-accent-soft disabled:opacity-40 disabled:pointer-events-none ${
+            isMobile ? 'h-11 w-11 justify-center' : 'h-9 gap-1.5 px-2.5 tx-sm'
+          }`}
+        >
+          <Download size={isMobile ? 20 : 18} strokeWidth={1.8} aria-hidden />
+          {!isMobile && (
+            <>
+              导出
+              <ChevronDown size={14} aria-hidden />
+            </>
           )}
-        </div>
-      )}
+        </button>
+        {exportOpen && (
+          <div role="menu" aria-label="导出" className="absolute right-0 top-full z-dropdown mt-1 w-44 rounded-md bg-surface p-1 shadow-[var(--elev-raised)]">
+            <ExportItem icon={FileCode2} label="导出 HTML" onClick={() => { setExportOpen(false); void exportCurrentDocument('html'); }} />
+            <ExportItem icon={FileText} label="导出纯文本" onClick={() => { setExportOpen(false); void exportCurrentDocument('txt'); }} />
+          </div>
+        )}
+      </div>
 
       {/* 视图模式（桌面 Segmented 3 态：分屏/编辑/预览） */}
       {!isMobile && <ViewModeSegmented />}
@@ -181,7 +189,7 @@ function ExportItem({ icon: Icon, label, onClick }: { icon: LucideIcon; label: s
       type="button"
       role="menuitem"
       onClick={onClick}
-      className="flex w-full items-center gap-2 rounded px-2 py-1.5 tx-sm text-fg hover:bg-surface-warm"
+      className="flex min-h-11 w-full items-center gap-2 rounded px-2 py-1.5 tx-sm text-fg hover:bg-surface-warm md:min-h-0 md:py-1.5"
     >
       <Icon size={14} strokeWidth={1.8} aria-hidden />
       {label}
@@ -192,31 +200,13 @@ function ExportItem({ icon: Icon, label, onClick }: { icon: LucideIcon; label: s
 function ViewModeSegmented() {
   const viewMode = useUiStore((s) => s.viewMode);
   const setViewMode = useUiStore((s) => s.setViewMode);
-  const modes = [
-    { mode: 'split' as const, icon: Columns2, label: '分屏' },
-    { mode: 'edit' as const, icon: PencilLine, label: '编辑' },
-    { mode: 'preview' as const, icon: Eye, label: '预览' },
+  // MUI-09：改用共享 Segmented（dense），激活态与移动端统一为 accent 底
+  const modes: SegmentedOption<ViewMode>[] = [
+    { value: 'split', label: '分屏', icon: <Columns2 size={16} strokeWidth={1.8} aria-hidden /> },
+    { value: 'edit', label: '编辑', icon: <PencilLine size={16} strokeWidth={1.8} aria-hidden /> },
+    { value: 'preview', label: '预览', icon: <Eye size={16} strokeWidth={1.8} aria-hidden /> },
   ];
   return (
-    <div role="group" aria-label="视图模式" className="flex items-center rounded-md bg-surface-sunken p-0.5">
-      {modes.map(({ mode, icon: Icon, label }) => {
-        const active = viewMode === mode;
-        return (
-          <button
-            key={mode}
-            type="button"
-            aria-pressed={active}
-            aria-label={`视图：${label}`}
-            title={`视图：${label}`}
-            onClick={() => setViewMode(mode)}
-            className={`inline-flex h-8 w-8 items-center justify-center rounded transition-colors duration-150 ${
-              active ? 'bg-surface-raised text-accent shadow-[var(--elev-ring)]' : 'text-fg-2 hover:text-fg'
-            }`}
-          >
-            <Icon size={16} strokeWidth={1.8} aria-hidden />
-          </button>
-        );
-      })}
-    </div>
+    <Segmented size="dense" ariaLabel="视图模式" value={viewMode} onChange={setViewMode} options={modes} />
   );
 }

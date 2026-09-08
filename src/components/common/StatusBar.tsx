@@ -7,7 +7,7 @@ import { useDebouncedValue } from '../../hooks/useDebouncedValue';
 import { computeStats } from '../../services/stats/stats.service';
 import { SaveIndicator } from './ConfirmModal';
 
-/** 状态栏（C 版高 26px chrome 退化；PAGES §7）：字数统计 + 打字机开关 + 保存状态 + 临时存储提示 */
+/** 状态栏（C 版高 26px chrome 退化；PAGES §7）：字数统计 + 打字机开关 + 保存状态 + 临时存储提示；底部安全区由本组件承担（MUI-02：AppShell DOM 顺序中最贴底元素） */
 export default function StatusBar() {
   const content = useEditorStore((s) => s.content);
   const saveStatus = useEditorStore((s) => s.saveStatus);
@@ -27,7 +27,7 @@ export default function StatusBar() {
   }, [saveStatus]);
 
   return (
-    <footer className="flex h-[var(--layout-statusbar-h)] shrink-0 items-center gap-4 border-t border-border-soft bg-bg px-3 tx-xs text-muted">
+    <footer className="flex min-h-[var(--layout-statusbar-h)] shrink-0 items-center gap-4 border-t border-border-soft bg-bg px-3 pb-[env(safe-area-inset-bottom)] tx-xs text-muted">
       <span className="font-mono tabular-nums">{stats.chars.toLocaleString()} 字</span>
       <span className="hidden sm:inline">{stats.words} 词</span>
       <span className="hidden sm:inline">{stats.lines} 行</span>
@@ -44,7 +44,7 @@ export default function StatusBar() {
         aria-pressed={typewriterMode}
         aria-label={typewriterMode ? '关闭打字机模式' : '开启打字机模式'}
         title={`打字机模式 ${typewriterMode ? '开' : '关'}（Ctrl+Shift+T）`}
-        className={`inline-flex h-7 items-center gap-1 rounded px-1.5 transition-colors duration-150 ${
+        className={`inline-flex h-11 items-center gap-1 rounded px-1.5 transition-colors duration-150 md:h-7 ${
           typewriterMode ? 'bg-accent-soft text-accent' : 'text-fg-2 hover:bg-surface-warm hover:text-fg'
         }`}
       >
@@ -58,7 +58,7 @@ export default function StatusBar() {
           <button
             type="button"
             onClick={() => void retrySave()}
-            className="ml-1 inline-flex h-7 items-center rounded px-1.5 tx-xs wt-medium text-danger hover:bg-surface-warm"
+            className="ml-1 inline-flex h-11 items-center rounded px-1.5 tx-xs wt-medium text-danger hover:bg-surface-warm md:h-7"
           >
             重试
           </button>

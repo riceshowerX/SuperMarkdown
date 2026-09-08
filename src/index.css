@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+/* ══ MUI-11：hover 变体限定为支持悬停的设备（触屏去粘滞；Tailwind 4 @custom-variant 官方写法，覆盖内置 hover 变体） ══ */
+@custom-variant hover {
+  @media (hover: hover) {
+    &:hover {
+      @slot;
+    }
+  }
+}
+
 /* ══ Token → Tailwind 颜色工具映射（全部引用 var(--*)，零硬编码） ══ */
 @theme {
   --color-bg: var(--bg);
@@ -151,4 +160,10 @@
 }
 .overlay-enter {
   animation: sm-overlay-in var(--motion-slow) var(--ease-emphasized);
+}
+
+/* ══ 移动端抽屉入场（MUI-08：200ms translateX；单向入场，关闭即卸载） ══ */
+@keyframes drawer-in {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
 }

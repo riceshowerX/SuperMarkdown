@@ -9,6 +9,9 @@
   "engines": {
     "node": ">=22.12.0"
   },
+  "overrides": {
+    "katex": "$katex"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
@@ -21,6 +24,9 @@
     "electron:dir": "npm run build && electron-builder --dir"
   },
   "dependencies": {
+    "@fontsource/inter": "^5.1.0",
+    "@fontsource/jetbrains-mono": "^5.1.0",
+    "@fontsource/noto-sans-sc": "^5.1.0",
     "@vscode/markdown-it-katex": "^1.1.2",
     "dexie": "^4.0.11",
     "dompurify": "^3.2.7",

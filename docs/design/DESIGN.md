@@ -4,7 +4,7 @@
 > 基于：UIUX-V3-MINIMAL-3OPTIONS.md（用户选定 C 版深化）
 > 三轴刻度：Variance=3 / Motion=2 / Density=3
 > 技术栈：React 19 + Tailwind v4（@theme CSS 变量）+ CSS 变量 Token + lucide-react 唯一图标库
-> 真源文件：`src/styles/design-tokens.css`（CSS 变量为运行时唯一真源）+ `design-tokens.json`（工具/参考）
+> 真源文件：`src/styles/design-tokens.css`（CSS 变量为运行时唯一真源）
 
 ---
 

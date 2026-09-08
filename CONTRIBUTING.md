@@ -41,7 +41,7 @@ npm run build      # 生产构建（含 tsc -b，比 typecheck 更严格）
 
 ## 设计变更
 
-影响 UI 的改动请先阅读 `docs/design/DESIGN.md` 与 `src/styles/design-tokens.css`——当前视觉真源是 DESIGN.md（v3.0「块面派」），`MASTER.md` 为已废止的历史版本。拿不准的视觉决策先开 Issue 讨论，避免大改后无法合并。
+影响 UI 的改动请先阅读 `docs/design/DESIGN.md` 与 `src/styles/design-tokens.css`——当前视觉真源是 DESIGN.md（v3.0「块面派」）。拿不准的视觉决策先开 Issue 讨论，避免大改后无法合并。
 
 ## 安全问题
 

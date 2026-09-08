@@ -46,7 +46,7 @@ export default function ShortcutsPanel() {
             type="button"
             onClick={() => setOpen(false)}
             aria-label="关闭快捷键面板"
-            className="inline-flex h-8 w-8 items-center justify-center rounded-md text-fg-2 transition-colors duration-150 hover:bg-surface-warm"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-md text-fg-2 transition-colors duration-150 hover:bg-surface-warm md:h-8 md:w-8"
           >
             <X size={16} aria-hidden />
           </button>

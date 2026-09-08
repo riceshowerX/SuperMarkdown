@@ -19,8 +19,9 @@ export default function Toasts() {
 
   return (
     <div
-      className={`pointer-events-none fixed z-toast flex w-80 max-w-[calc(100vw-2rem)] max-h-[60dvh] flex-col gap-2 overflow-y-auto ${
-        isMobile ? 'left-1/2 top-16 -translate-x-1/2' : 'bottom-10 right-4'
+      className={`pointer-events-none fixed z-toast flex w-80 max-w-[calc(100vw-2rem)] flex-col gap-2 ${
+        // MUI-07：移动端下移避开「编辑/预览」分段头；去掉 overflow-y-auto/max-h（与 pointer-events-none 矛盾且不可滚动，条数上限由 pushToast slice(-4) 保证）
+        isMobile ? 'left-1/2 top-28 -translate-x-1/2' : 'bottom-10 right-4'
       }`}
     >
       {toasts.map((toast) => (
@@ -85,7 +86,7 @@ function ToastCard({ toast, onDismiss }: { toast: ToastItem; onDismiss: () => vo
         type="button"
         onClick={onDismiss}
         aria-label="关闭提示"
-        className="shrink-0 rounded p-2 text-fg-2 transition-colors duration-150 hover:bg-surface-warm md:p-0.5"
+        className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded text-fg-2 transition-colors duration-150 hover:bg-surface-warm md:h-7 md:w-7 md:p-0"
       >
         <X size={14} aria-hidden />
       </button>
